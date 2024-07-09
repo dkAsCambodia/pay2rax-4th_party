@@ -117,7 +117,7 @@ class PaymentEcommController extends Controller
         $res['merchant_code'] = $request->merchant_code;
         $res['currency'] = $request->currency;
         $res['amount'] = $request->amount;
-
+ 
         $res['payin_api_token'] = $request->payin_api_token;
         $res['transaction_id'] = $frtransaction; // 4th party
         $res['callback_url'] = url('payment_status');
