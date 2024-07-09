@@ -40,6 +40,8 @@ use App\Models\CurrencyExchangeRate;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\PaypalPaymentController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -385,5 +387,8 @@ Route::get('/payment_status', [MyMemberController::class, 'payment_status']);
 Route::controller(PayoutController::class)->group(function () {
     Route::get('payout_status', 'payout_status');
 });
+
+Route::get('/paypalCheckout/success', [PaypalPaymentController::class, 'paypalSuccess'])->name('paypalCheckout.success');
+Route::get('/paypalCheckout/cancel', [PaypalPaymentController::class, 'paypalCancel'])->name('paypalCheckout.cancel');
 // ------------------------------ Gtech DK END ---------------------------------//
 

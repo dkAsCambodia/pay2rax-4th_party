@@ -7,6 +7,7 @@ use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentEcommController;
+use App\Http\Controllers\PaypalPaymentController;
 use App\Http\Controllers\PaymentMapController;
 use App\Http\Controllers\PayoutController;
 
@@ -41,6 +42,11 @@ Route::controller(PaymentDetailController::class)->group(function () {
 
 Route::controller(PaymentEcommController::class)->group(function () {
     Route::get('payment', 'paymentNewNew');
+});
+
+Route::controller(PaypalPaymentController::class)->group(function () {
+    Route::post('paypal/checkout', 'paypalCheckout')->name('paypal.checkout');
+    
 });
 
 Route::controller(MerchantController::class)->group(function () {
