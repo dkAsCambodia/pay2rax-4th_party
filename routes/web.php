@@ -41,6 +41,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PaypalPaymentController;
+use App\Http\Controllers\StripePaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -390,5 +391,6 @@ Route::controller(PayoutController::class)->group(function () {
 
 Route::get('/paypalCheckout/success', [PaypalPaymentController::class, 'paypalSuccess'])->name('paypalCheckout.success');
 Route::get('/paypalCheckout/cancel', [PaypalPaymentController::class, 'paypalCancel'])->name('paypalCheckout.cancel');
+Route::get('/stripe/checkoutForm', [PaypalPaymentController::class, 'stripeCheckoutForm'])->name('stripe.checkoutForm');
 // ------------------------------ Gtech DK END ---------------------------------//
 

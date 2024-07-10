@@ -8,6 +8,7 @@ use App\Http\Controllers\BillingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentEcommController;
 use App\Http\Controllers\PaypalPaymentController;
+use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\PaymentMapController;
 use App\Http\Controllers\PayoutController;
 
@@ -46,6 +47,11 @@ Route::controller(PaymentEcommController::class)->group(function () {
 
 Route::controller(PaypalPaymentController::class)->group(function () {
     Route::post('paypal/checkout', 'paypalCheckout')->name('paypal.checkout');
+    
+});
+
+Route::controller(StripePaymentController::class)->group(function () {
+    Route::post('stripe/checkout', 'stripeCheckout')->name('stripe.check');
     
 });
 
