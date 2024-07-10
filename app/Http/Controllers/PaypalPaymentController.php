@@ -22,6 +22,7 @@ class PaypalPaymentController extends Controller
 
     public function paypalCheckout(Request $request)
     { 
+        echo "dddd";
         // $res['currency'] = $request->curr;
         // $res['amount'] = $request->price;
         // $res['customer_name'] = $request->customer_name;
@@ -36,7 +37,7 @@ class PaypalPaymentController extends Controller
     			'cancelUrl' => route('paypalCheckout.cancel'),
     		))->send();
             $data = $response->getData();
-            //    echo "<pre>";  print_r($data); die;
+               echo "<pre>";  print_r($data); die;
     		if ($response->isRedirect()) {
                  // Code for Inser data into DB START
                  PaymentDetail::create([
