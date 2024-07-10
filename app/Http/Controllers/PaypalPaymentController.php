@@ -35,7 +35,7 @@ class PaypalPaymentController extends Controller
     		))->send();
             $data = $response->getData();
             //    echo "<pre>";  print_r($data); die;
-    		if ($response->isRedirect()) {
+    		if ($response->isRedirect() && !empty($request->merchant_code)) {
                  // Code for Inser data into DB START
                  PaymentDetail::create([
                     'merchant_code' => $request->merchant_code,
