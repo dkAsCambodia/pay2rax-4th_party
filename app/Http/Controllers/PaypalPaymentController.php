@@ -5,13 +5,11 @@ use Illuminate\Http\Request;
 
 use Omnipay\Omnipay;
 use App\Models\PaymentDetail;
-
 use Session;
 
 class PaypalPaymentController extends Controller
 {
     private $gateway;
-
      function __construct()
     {
     	$this->gateway = Omnipay::create('PayPal_Rest');
@@ -22,7 +20,6 @@ class PaypalPaymentController extends Controller
 
     public function paypalCheckout(Request $request)
     { 
-        echo "dddd";
         // $res['currency'] = $request->curr;
         // $res['amount'] = $request->price;
         // $res['customer_name'] = $request->customer_name;
@@ -37,7 +34,7 @@ class PaypalPaymentController extends Controller
     			'cancelUrl' => route('paypalCheckout.cancel'),
     		))->send();
             $data = $response->getData();
-               echo "<pre>";  print_r($data); die;
+            //    echo "<pre>";  print_r($data); die;
     		if ($response->isRedirect()) {
                  // Code for Inser data into DB START
                  PaymentDetail::create([
@@ -49,8 +46,6 @@ class PaypalPaymentController extends Controller
                     'amount' => $request->price,
                     'payment_method' => "card",
                     'customer_id' => ! empty($request->customer_id) ? $request->customer_id : 0,
-                    // 'ip_address' => $ip,
-                    // 'merchantAmount' => $merchantAmount,
                     'Currency' => $request->curr,
                     'ErrDesc' => 'Paypal Gateway',
                 ]);
