@@ -51,7 +51,7 @@ Route::controller(PaypalPaymentController::class)->group(function () {
 });
 
 Route::controller(StripePaymentController::class)->group(function () {
-    Route::post('stripe/checkout', 'stripeCheckout')->name('stripe.check');
+    Route::post('stripe/checkout', 'stripeCheckoutPage')->name('stripe.CheckoutPage');
     
 });
 
