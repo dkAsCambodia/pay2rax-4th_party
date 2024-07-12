@@ -391,6 +391,10 @@ Route::controller(PayoutController::class)->group(function () {
 
 Route::get('/paypalCheckout/success', [PaypalPaymentController::class, 'paypalSuccess'])->name('paypalCheckout.success');
 Route::get('/paypalCheckout/cancel', [PaypalPaymentController::class, 'paypalCancel'])->name('paypalCheckout.cancel');
-Route::post('/stripe/checkoutForm', [PaypalPaymentController::class, 'stripeCheckoutForm'])->name('stripe.checkoutForm');
+Route::get('/stripe/process/{currency}/{amount}/{customer_name}/{customer_email}/{customer_phone}/{card_number}/{expiration}/{cvv}/{merchant_code}', [StripePaymentController::class, 'stripeProcess'])->name('stripe.Process');
+
+Route::controller(StripePaymentController::class)->group(function () {
+    Route::post('stripe/checkoutForm', 'stripeCheckoutForm')->name('Stripe: checkoutForm');
+});
 // ------------------------------ Gtech DK END ---------------------------------//
 
