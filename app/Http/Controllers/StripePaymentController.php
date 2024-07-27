@@ -11,11 +11,11 @@ class StripePaymentController extends Controller
 {
     public function stripeCheckoutPage(Request $request)
     {
-        return redirect('/stripe/process'.'/'.base64_encode($request->curr).'/'.base64_encode($request->price).'/'.base64_encode($request->customer_name).'/'.base64_encode($request->customer_email).'/'.base64_encode($request->customer_phone).'/'.base64_encode($request->card_number).'/'.base64_encode($request->expiration).'/'.base64_encode($request->cvv).'/'.base64_encode($request->merchant_code));  
+        return redirect('/stripe/process'.'/'.base64_encode($request->curr).'/'.base64_encode($request->price).'/'.base64_encode($request->customer_name).'/'.base64_encode($request->customer_email).'/'.base64_encode($request->customer_phone).'/'.base64_encode($request->card_number).'/'.base64_encode($request->expiration).'/'.base64_encode($request->cvv).'/'.base64_encode($request->merchant_code).'/'.base64_encode($request->transaction_id));  
     }
 
     
-    public function stripeProcess( $currency, $amount, $customer_name, $customer_email, $customer_phone, $card_number, $expiration, $cvv, $merchant_code)
+    public function stripeProcess( $currency, $amount, $customer_name, $customer_email, $customer_phone, $card_number, $expiration, $cvv, $merchant_code, $transaction_id)
     {
         $res['currency'] = base64_decode($currency);
         $res['amount'] = base64_decode($amount);
@@ -26,6 +26,7 @@ class StripePaymentController extends Controller
         $res['expiration'] = base64_decode($expiration);
         $res['cvv'] = base64_decode($cvv);
         $res['merchant_code'] = base64_decode($merchant_code);
+        $res['transaction_id'] = base64_decode($transaction_id);
         // print_r($res); die;
          return view('payment-form.stripe-page', compact('res'));
     }
@@ -60,7 +61,7 @@ class StripePaymentController extends Controller
                 PaymentDetail::create([
                     'merchant_code' => $request->merchant_code,
                     'transaction_id' => $data->id,
-                    'fourth_party_transection' => $data->id,
+                    'fourth_party_transection' => $request->transaction_id,
                     'customer_name' => $request->customer_name,
                     'callback_url' => $data->receipt_url,
                     'amount' => $request->amount,
@@ -73,7 +74,14 @@ class StripePaymentController extends Controller
                     'payment_status' => $payment_status,
                 ]);
                 // Code for Inser data into DB END
-                return $payment_status;
+
+                echo "Transaction Information as follows" . '<br/>' .
+                        "TransactionId : " . $request->transaction_id . '<br/>' .
+                        "Currency : " . $request->currency . '<br/>' .
+                        "Amount : " . $request->amount . '<br/>' .
+                        "Datetime : " . $created_date . '<br/>' .
+                        "Status : " . $payment_status;
+                    die;
                    
             }
             
