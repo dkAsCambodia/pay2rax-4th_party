@@ -40,7 +40,7 @@ class PaypalPaymentController extends Controller
                  PaymentDetail::create([
                     'merchant_code' => $request->merchant_code,
                     'transaction_id' => $data['id'],
-                    'fourth_party_transection' => $data['id'],
+                    'fourth_party_transection' => $request->payin_request_id ?? $request->transaction_id,
                     'customer_name' => $request->customer_name,
                     'callback_url' => $data['links']['1']['href'],
                     'amount' => $request->price,
