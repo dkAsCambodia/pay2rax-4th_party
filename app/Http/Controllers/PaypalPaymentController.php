@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 
 use Omnipay\Omnipay;
 use App\Models\PaymentDetail;
+use App\Models\Merchant;
 use Session;
 
 class PaypalPaymentController extends Controller
@@ -20,6 +21,10 @@ class PaypalPaymentController extends Controller
 
     public function paypalCheckout(Request $request)
     { 
+        $exitMerchant = Merchant::where('merchant_code', $request->merchant_code)->where('status', 'Enable')->first();
+        if(empty($exitMerchant)){
+            return "Invalid merchant";
+        }
         // $res['currency'] = $request->curr;
         // $res['amount'] = $request->price;
         // $res['customer_name'] = $request->customer_name;
