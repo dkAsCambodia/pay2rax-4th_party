@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Stripe;
 use Session;
 use App\Models\PaymentDetail;
+use App\Models\Merchant;
 
 class StripePaymentController extends Controller
 {
@@ -17,6 +18,10 @@ class StripePaymentController extends Controller
     
     public function stripeProcess( $currency, $amount, $customer_name, $customer_email, $customer_phone, $card_number, $expiration, $cvv, $merchant_code, $transaction_id)
     {
+        $exitMerchant = Merchant::where('merchant_code', base64_decode($merchant_code))->where('status', 'Enable')->first();
+        if(empty($exitMerchant)){
+            return "Invalid merchant";
+        }
         $res['currency'] = base64_decode($currency);
         $res['amount'] = base64_decode($amount);
         $res['customer_name'] = base64_decode($customer_name); // Customer Name
