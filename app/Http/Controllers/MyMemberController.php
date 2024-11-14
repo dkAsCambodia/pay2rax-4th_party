@@ -38,6 +38,8 @@ class MyMemberController extends Controller
             $paymentStatus = 'success';
         }elseif ($data['payment_status'] == 'pending' || $data['payment_status'] == 'Pending' || $data['payment_status'] == 'PENDING') {
             $paymentStatus = 'pending';
+        }elseif ($data['payment_status'] == 'processing' || $data['payment_status'] == 'Processing' ) {
+            $paymentStatus = 'processing';
         }else {
             $paymentStatus = 'failed';
         }
