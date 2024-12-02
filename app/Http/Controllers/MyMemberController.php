@@ -43,16 +43,23 @@ class MyMemberController extends Controller
         }else {
             $paymentStatus = 'failed';
         }
-        PaymentDetail::where('fourth_party_transection', $data['transaction_id'])->update([
+        $updateData = [
             'TransId' => $data['payment_transaction_id'],
             'payment_status' => $paymentStatus,
             'response_data' => $data,
-        ]);
+        ];
+        if (isset($data['payment_amount']) && !empty($data['payment_amount'])) {
+            $updateData['amount'] = $data['payment_amount'];
+        }
+        if (isset($data['currency']) && !empty($data['currency'])) {
+            $updateData['Currency'] = $data['currency'];
+        }
+        // echo "<pre>"; print_r($data); die;
+        PaymentDetail::where('fourth_party_transection', $data['transaction_id'])->update($updateData);
+        
 
         $paymentDetail = PaymentDetail::where('fourth_party_transection', $data['transaction_id'])->first();
-
         $callbackUrl = $paymentDetail->callback_url;
-
         $postData = [
             'merchant_code' => $paymentDetail->merchant_code,
             'transaction_id' => $paymentDetail->transaction_id,
