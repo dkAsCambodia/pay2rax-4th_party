@@ -37,6 +37,7 @@
                                         <option value="">{{ __('messages.All') }}</option>
                                         <option value="pending">{{ __('messages.pending') }}</option>
                                         <option value="success">{{ __('messages.Success') }}</option>
+                                        <option value="processing">{{ __('messages.processing') }}</option>
                                         <option value="failed">{{ __('messages.Failed') }}</option>
                                     </select>
                                 </div>
@@ -129,6 +130,25 @@
                     <div class="table-responsive">
                         <table class="table table-bordered">
                             <tr>
+                                
+                                <td class="bg-dark text-white" style="width: 20%;">{{ __('messages.Transaction ID') }}</td>
+                                <td><span class="fourth_transaction_id"></span></td>
+                                <td class="bg-dark text-white">{{ __('messages.Status') }}</td>
+                                <td><span class="order_status"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white">{{ __('messages.Payment Amount') }}</td>
+                                <td><span class="amount"></span></td>
+                                <td class="bg-dark text-white">{{ __('messages.Currency') }}</td>
+                                <td><span class="currency"></span></td>
+                            </tr>
+                            <tr>
+                                <td class="bg-dark text-white">{{ __('messages.Callback URL') }}</td>
+                                <td style="width:290px;word-break:break-all;" class="callback_url"> </td>
+                                <td class="bg-dark text-white">{{ __('messages.Payment Product ID') }}</td>
+                                <td><span class="product_id"></span></td>
+                            </tr>
+                            <tr>
                                 <td class="bg-dark text-white">{{ __('messages.Merchant Name') }}</td>
                                 <td><span class="merchant_name"></span></td>
                                 <td class="bg-dark text-white">{{ __('messages.Merchant Code') }}</td>
@@ -141,35 +161,23 @@
                                 <td><span class="agent_code"></span></td>
                             </tr>
                             <tr>
-                                <td class="bg-dark text-white" style="width: 20%;">{{ __('messages.Transaction ID') }}</td>
-                                <td><span class="fourth_transaction_id"></span></td>
                                 <td class="bg-dark text-white">{{ __('messages.Merchant Track No.') }}</td>
                                 <td><span class="transaction_id"></span></td>
+                                <td class="bg-dark text-white">{{ __('messages.Created Time') }}</td>
+                                <td><span class="created_date"></span></td>
                             </tr>
                             <tr>
                                 <td class="bg-dark text-white">{{ __('messages.Customer Name') }}</td>
                                 <td><span class="customer_name"></span></td>
-                                <td class="bg-dark text-white">{{ __('messages.Currency') }}</td>
-                                <td><span class="currency"></span></td>
+                                <td class="bg-dark text-white">{{ __('messages.Remark') }}</td>
+                                <td><span class="error_desc"></span></td>
                             </tr>
                             <tr>
-                                <td class="bg-dark text-white">{{ __('messages.Payment Amount') }}</td>
-                                <td><span class="amount"></span></td>
-                                <td class="bg-dark text-white">{{ __('messages.Status') }}</td>
-                                <td><span class="order_status"></span></td>
-                            </tr>
-                            {{-- <tr>
-                                <td class="bg-dark text-white">{{ __('messages.Callback URL') }}</td>
-                                <td style="width:290px;word-break:break-all;" class="callback_url"> </td>
-                                <td class="bg-dark text-white">{{ __('messages.Payment Product ID') }}</td>
-                                <td><span class="product_id"></span></td>
-                            </tr> --}}
-                            {{-- <tr>
-                                <td class="bg-dark text-white">{{ __('messages.Payment Channel') }}</td>
-                                <td><span class="payment_channel"></span></td>
-                                <td class="bg-dark text-white">{{ __('messages.Payment Method') }}</td>
+                                <td class="bg-dark text-white">{{ __('messages.Payment method') }}</td>
                                 <td><span class="payment_method"></span></td>
-                            </tr> --}}
+                                <td class="bg-dark text-white">{{ __('messages.Send Notification') }}</td>
+                                <td><span class="sendbutton"></span></td>
+                            </tr>
                         </table>
                     </div>
                 </div>
@@ -212,6 +220,11 @@
                     $('span.Gateway_Ref_ID').text(data.data.TransId);
                     $('span.error_desc').text(data.data.ErrDesc);
                     $('td.callback_url').text(data.data.callback_url);
+                    $('span.sendbutton').html(
+                        '<a class="btn btn-danger btn-sm" href="/sendDepositNotification/' + btoa(data.data.id) + '" target="_blank">' +
+                        '{{ __('messages.Click here to send Notification') }}' +
+                        '</a>'
+                    );
                     // $('span.product_name').text(data.data.payment_maps.payment_url.url_name);
 
 

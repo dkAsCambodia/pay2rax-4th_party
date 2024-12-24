@@ -36,6 +36,7 @@
                                         <option value="" selected>{{ __('messages.All') }}</option>
                                         <option value="pending">{{ __('messages.pending') }}</option>
                                         <option value="success">{{ __('messages.Success') }}</option>
+                                        <option value="processing">{{ __('messages.processing') }}</option>
                                         <option value="failed">{{ __('messages.Failed') }}</option>
                                     </select>
                                 </div>
@@ -98,6 +99,7 @@
                                             <th>{{ __('messages.Amount') }} </th>
                                             <th>{{ __('messages.Currency') }}</th>
                                             <th >{{ __('messages.Status') }}</th>
+                                            <th>{{ __('messages.Action') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -153,6 +155,7 @@
                         {data: 'amount'},
                         {data: 'Currency'},
                         {data: 'payment_status'},
+                        {data: 'action'},
                     ],
                     columnDefs: [
                         { className: "dt-right", targets: [  4, 5 ] },
