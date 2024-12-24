@@ -37,6 +37,10 @@ class PaymentEcommController extends Controller
         if ($paymentMap->status == 'Disable') {
             return 'product is Disable';
         }
+        $merchantData=Merchant::where('merchant_code', $request->merchant_code)->first();
+        if (empty($merchantData)) {
+            return 'Invalid Merchants!';
+        }
 
         if ($paymentMap->channel_mode == 'single') {
             $gatewayPaymentChannel = GatewayPaymentChannel::where('id', $paymentMap->gateway_payment_channel_id)
@@ -113,7 +117,7 @@ class PaymentEcommController extends Controller
         // $res['SecurityCode'] = 'zSAIDEPVZLyuc4ESXKO2';  //4thparty
         // $res['Merchant'] = 'PA020';  //4thparty
         // product_id  // 4thparty
-
+        $res['agent_id'] = $merchantData->agent_id;
         $res['merchant_code'] = $request->merchant_code;
         $res['currency'] = $request->currency;
         $res['amount'] = $request->amount;
@@ -265,6 +269,7 @@ class PaymentEcommController extends Controller
         }
 
         $addRecord = [
+            'agent_id' => $res['agent_id'],
             'merchant_code' => $request->merchant_code,
             'transaction_id' => $request->transaction_id,
             // 'fourth_party_transection' => "TR" . rand(100000, 999999),
