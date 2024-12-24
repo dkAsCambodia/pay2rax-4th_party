@@ -1,6 +1,9 @@
 <div class="dlabnav">
     <div class="dlabnav-scroll">
         <ul class="metismenu" id="menu">
+            @php
+            $data = getTodayTransactionCount();
+            @endphp
             @if (Auth()->user()->role_name !== 'Merchant')
                 <li><a class="ai-icon" href="{{ route('home') }}" aria-expanded="false">
                         <i class="flaticon-025-dashboard"></i>
@@ -25,6 +28,7 @@
                     <a class=" ai-payments" href="{{ route('details-payment/list-agent') }}" aria-expanded="false">
                         <i class="flaticon-072-paymentdetails"></i>
                         <span class="nav-text">{{ __('messages.Payment Details') }}</span>
+                        <b>{{ $data['todayDepositCount'] > 0 ? '(' . $data['todayDepositCount'] . ')' : '' }}</b>
                     </a>
                 </li>
                 <li>
@@ -61,6 +65,7 @@
                     <a class=" ai-payments" href="{{ route('details-payment/list-merchant') }}" aria-expanded="false">
                         <i class="flaticon-072-paymentdetails"></i>
                         <span class="nav-text">{{ __('messages.Payment Details') }}</span>
+                        <b>{{ $data['todayDepositCount'] > 0 ? '(' . $data['todayDepositCount'] . ')' : '' }}</b>
                     </a>
                 </li>
                 <li>
@@ -169,6 +174,7 @@
                             aria-expanded="false">
                             <i class="flaticon-072-paymentdetails"></i>
                             <span class="nav-text">{{ __('messages.Payment Details') }}</span>
+                            <b>{{ $data['todayDepositCount'] > 0 ? '(' . $data['todayDepositCount'] . ')' : '' }}</b>
                         </a>
                     </li>
                 @endif
