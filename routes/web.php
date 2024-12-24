@@ -377,9 +377,12 @@ Route::get('/payment', function () {
 
     return view('payment.index', compact('currency'));
 });
-Route::post('/payment/store', [MyMemberController::class, 'store']);
-Route::get('/payment_status', [MyMemberController::class, 'payment_status']);
 
+Route::controller(MyMemberController::class)->group(function () {
+    Route::post('/payment/store', 'store');
+    Route::get('/payment_status', 'payment_status');
+    Route::get('sendDepositNotification/{id}', 'sendDepositNotification'); 
+});
 
 // ------------------------------ Gtech DK START ---------------------------------//
 // Route::get('/gtechz/payin', [PayinController::class, 'payinform']);
