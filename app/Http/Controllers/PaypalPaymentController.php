@@ -4,7 +4,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
 use Omnipay\Omnipay;
-use App\Models\PaymentDetail;
+use App\Models\PaymentDetail; 
 use App\Models\Merchant;
 use Session;
 
