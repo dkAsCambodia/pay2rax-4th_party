@@ -404,9 +404,11 @@ Route::controller(StripePaymentController::class)->group(function () {
 
 
 Route::controller(BanksyPaymentController::class)->group(function () {
-    Route::get('/bnkCardDeposit', 'bnkCardDepositform');
     Route::get('/bnkdeposit_success/{bnksessTransId}', 'bnkdeposit_success');
     Route::get('/bnkdeposit_fail/{bnksessTransId}', 'bnkdeposit_fail');
+
+    Route::get('/bnkCardDeposit', 'bnkCardDepositform');
+    Route::post('depositResponse', 'depositResponse')->name('depositResponse');
 });
 
 Route::get('/demo', function () {

@@ -46,7 +46,7 @@
                         <form class="form-horizontal" action="{{ route('apiroute.banksy.checkout') }}" method="GET" id="paymentForm">
                             <input type="hidden" name="merchant_code" value="testmerchant005">
                             <input type="hidden" name="product_id" value="19">
-                            <input type="hidden" name="callback_url" value="https://payin.pay2rax.com/payin_response_url.php">
+                            <input type="hidden" name="callback_url" value="{{ route('depositResponse') }}">
 							<div class="row mb-4">
                                 <label for="Reference" class="col-md-3 form-label">Reference ID</label>
                                 <div class="col-md-9">

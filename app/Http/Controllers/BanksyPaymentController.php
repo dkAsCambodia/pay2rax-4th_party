@@ -180,7 +180,8 @@ class BanksyPaymentController extends Controller
         $callbackUrl = $paymentDetail->callback_url;
         $postData = [
             'merchant_code' => $paymentDetail->merchant_code,
-            'transaction_id' => $paymentDetail->transaction_id,
+            'referenceId' => $paymentDetail->transaction_id,
+            'transaction_id' => $paymentDetail->fourth_party_transection,
             'amount' => $paymentDetail->amount,
             'Currency' => $paymentDetail->Currency,
             'customer_name' => $paymentDetail->customer_name,
@@ -203,7 +204,8 @@ class BanksyPaymentController extends Controller
         $callbackUrl = $paymentDetail->callback_url;
         $postData = [
             'merchant_code' => $paymentDetail->merchant_code,
-            'transaction_id' => $paymentDetail->transaction_id,
+            'referenceId' => $paymentDetail->transaction_id,
+            'transaction_id' => $paymentDetail->fourth_party_transection,
             'amount' => $paymentDetail->amount,
             'Currency' => $paymentDetail->Currency,
             'customer_name' => $paymentDetail->customer_name,
@@ -217,6 +219,11 @@ class BanksyPaymentController extends Controller
     public function bnkCardDepositform(Request $request)
     {
         return view('payment-form.bnk-form');
+    }
+
+    public function depositResponse(Request $request)
+    {
+        echo "<pre>";  print_r($request->all()); die;
     }
 
     public function getGatewayParameters($gatewayPaymentChannel): array
