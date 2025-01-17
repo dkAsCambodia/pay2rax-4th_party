@@ -42,6 +42,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\PaypalPaymentController;
 use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\BanksyPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -401,3 +402,13 @@ Route::controller(StripePaymentController::class)->group(function () {
 });
 // ------------------------------ Gtech DK END ---------------------------------//
 
+
+Route::controller(BanksyPaymentController::class)->group(function () {
+    Route::get('/bnkCardDeposit', 'bnkCardDepositform');
+    Route::get('/bnkdeposit_success/{bnksessTransId}', 'bnkdeposit_success');
+    Route::get('/bnkdeposit_fail/{bnksessTransId}', 'bnkdeposit_fail');
+});
+
+Route::get('/demo', function () {
+    return view('demo');
+});

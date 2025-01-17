@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7b576031ca6515e359b934a135a17b03",
+    "content-hash": "0244e06e4ce0f2beaa70929ac744cc08",
     "packages": [
         {
             "name": "beyondcode/laravel-websockets",
@@ -561,6 +561,7 @@
             "time": "2024-07-08T12:26:09+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "doctrine/cache",
             "version": "2.2.0",
             "source": {
@@ -767,6 +768,8 @@
             "time": "2024-06-19T10:38:17+00:00"
         },
         {
+=======
+>>>>>>> 62b6bd62532362f86eca999d4ebf16a65d55d9f2
             "name": "doctrine/deprecations",
             "version": "1.1.3",
             "source": {
@@ -814,6 +817,7 @@
             "time": "2024-01-30T19:34:25+00:00"
         },
         {
+<<<<<<< HEAD
             "name": "doctrine/event-manager",
             "version": "2.0.1",
             "source": {
@@ -905,6 +909,8 @@
             "time": "2024-05-22T20:47:39+00:00"
         },
         {
+=======
+>>>>>>> 62b6bd62532362f86eca999d4ebf16a65d55d9f2
             "name": "doctrine/inflector",
             "version": "2.0.10",
             "source": {
@@ -4870,55 +4876,6 @@
                 }
             ],
             "time": "2023-11-12T21:59:55+00:00"
-        },
-        {
-            "name": "psr/cache",
-            "version": "3.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/php-fig/cache.git",
-                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/php-fig/cache/zipball/aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
-                "reference": "aa5030cfa5405eccfdcb1083ce040c2cb8d253bf",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=8.0.0"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.0.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Psr\\Cache\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "PHP-FIG",
-                    "homepage": "https://www.php-fig.org/"
-                }
-            ],
-            "description": "Common interface for caching libraries",
-            "keywords": [
-                "cache",
-                "psr",
-                "psr-6"
-            ],
-            "support": {
-                "source": "https://github.com/php-fig/cache/tree/3.0.0"
-            },
-            "time": "2021-02-03T23:26:27+00:00"
         },
         {
             "name": "psr/clock",
