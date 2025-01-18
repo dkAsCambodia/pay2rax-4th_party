@@ -1,0 +1,20 @@
+[1mdiff --git a/app/Http/Controllers/BanksyPaymentController.php b/app/Http/Controllers/BanksyPaymentController.php[m
+[1mindex e6d2d31..8a5058f 100644[m
+[1m--- a/app/Http/Controllers/BanksyPaymentController.php[m
+[1m+++ b/app/Http/Controllers/BanksyPaymentController.php[m
+[36m@@ -102,13 +102,13 @@[m [mpublic function banksyCheckout(Request $request)[m
+         // Call Curl API code START[m
+         // Session::put('bnksessTransId', $frtransaction);[m
+         $headers = [[m
+[31m-            'Content-Type' => 'application/json', [m
+[32m+[m[32m            'Content-Type' => 'application/json',[m
+             'X-AUTH' => $res['apiKey'],[m
+         ];[m
+         $postData = [[m
+             'amount' => $request->amount,[m
+             'currency' => $request->currency,[m
+[31m-            'successCallback' => url('bnkdeposit_success/'.$frtransaction),  [m
+[32m+[m[32m            'successCallback' => url('bnkdeposit_success/'.$frtransaction),[m[41m [m
+             'failureCallback' => url('bnkdeposit_fail/'.$frtransaction),[m
+             'currencyType' => $res['currencyType'],[m
+             'isKycOptional' => true,[m
