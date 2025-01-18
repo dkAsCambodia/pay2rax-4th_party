@@ -11,15 +11,15 @@ $referenceNo="GZTRN".time().generateRandomString(3);
 $apiUrl = "https://payment.pay2rax.com/api/bnk/checkout";
 
 $data = [
-    'merchant_code' => 'testmerchant005',
+    'merchant_code' => $_GET['merchant_code'],
     'product_id' => '19',
     'referenceId' => $referenceNo, 
     // 'callback_url' => 'http://127.0.0.1:8000/depositResponse',
     'callback_url' => 'https://payment.pay2rax.com/depositResponse',
-    'currency' => 'USD', 
-    'amount' => '100', 
-    'customer_email' => 'customer@example.com', 
-    'customer_name' => 'John Doe', 
+    'currency' =>  $_GET['currency'], 
+    'amount' => $_GET['amount'],   
+    'customer_email' => 'dk@gmail.com', 
+    'customer_name' => 'dk John Doe', 
 ];
 $fullUrl = $apiUrl . '?' . http_build_query($data);
 ?>

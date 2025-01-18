@@ -218,12 +218,14 @@ class BanksyPaymentController extends Controller
 
     public function bnkCardDepositform(Request $request)
     {
-        return view('payment-form.bnk-form');
+        return view('payment-form.bnks.bnk-form');
     }
 
     public function depositResponse(Request $request)
     {
-        echo "<pre>";  print_r($request->all()); die;
+        $data = $request->all();
+        unset($data['_token']);
+        echo "<pre>";  print_r($data); die;
     }
 
     public function getGatewayParameters($gatewayPaymentChannel): array

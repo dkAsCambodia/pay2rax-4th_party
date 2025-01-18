@@ -411,6 +411,6 @@ Route::controller(BanksyPaymentController::class)->group(function () {
     Route::post('depositResponse', 'depositResponse')->name('depositResponse');
 });
 
-Route::get('/demo', function () {
-    return view('demo');
+Route::get('/bnksdemo', function () {
+    return view('payment-form.bnks.demo');
 });
