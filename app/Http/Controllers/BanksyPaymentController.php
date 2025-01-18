@@ -102,7 +102,7 @@ class BanksyPaymentController extends Controller
         // Call Curl API code START
         // Session::put('bnksessTransId', $frtransaction);
         $headers = [
-            'Content-Type' => 'application/json',
+            'Content-Type' => 'application/json', 
             'X-AUTH' => $res['apiKey'],
         ];
         $postData = [
