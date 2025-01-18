@@ -140,7 +140,6 @@ class BanksyPaymentController extends Controller
                 'merchant_code' => $request->merchant_code,
                 'transaction_id' => $request->referenceId,
                 'fourth_party_transection' => $frtransaction,
-                'customer_name' => $request->customer_name,
                 'callback_url' => $request->callback_url,
                 'amount' => $request->amount,
                 'Currency' => $request->currency,
@@ -148,16 +147,11 @@ class BanksyPaymentController extends Controller
                 'payment_channel' => $gatewayPaymentChannel->id,
                 'payment_method' => $paymentMethod->method_name,
                 'request_data' => json_encode($res),
-               
-                'order_id' => 'BankSy Gateway',
-                'order_date' => 'customer_phone',
-                'order_status' => $request->customer_email,
-                'ErrDesc' => 'bank_account_name',
-                'merchant_settle_status' => 'KTB',
-                'agent_settle_status' => '3423434324',
-                'merchant_rate' => 'payin_arr',
-                'agent_rate' => $jsonData['paymentLink'],
-                'cny_amount' => $merchantData->id,
+                'gateway_name' => 'BankSy Gateway',
+                'customer_name' => $request->customer_name,
+                'customer_email' => $request->customer_email,
+                // 'payin_arr' => '',
+                'receipt_url' => $jsonData['paymentLink'],
             ];
               // echo "<pre>";  print_r($addRecord); die;
             PaymentDetail::create($addRecord);
@@ -173,7 +167,7 @@ class BanksyPaymentController extends Controller
         $updateData = [
             'TransId' => $request->paymentId,
             'payment_status' => 'success',
-            'response_data' => '',
+            'payin_arr' => '',
         ];
         PaymentDetail::where('fourth_party_transection', $bnksessTransId)->update($updateData);
         $paymentDetail = PaymentDetail::where('fourth_party_transection', $bnksessTransId)->first();
@@ -197,7 +191,7 @@ class BanksyPaymentController extends Controller
         $updateData = [
             'TransId' => $request->paymentId,
             'payment_status' => 'failed',
-            'response_data' => '',
+            'payin_arr' => '',
         ];
         PaymentDetail::where('fourth_party_transection', $bnksessTransId)->update($updateData);
         $paymentDetail = PaymentDetail::where('fourth_party_transection', $bnksessTransId)->first();
@@ -232,7 +226,6 @@ class BanksyPaymentController extends Controller
     {
         // Decode the JSON payload automatically
         $results = $request->json()->all();
-       
         if(!empty($results)) {
             // Extract data
             $transactionId = $results['paymentId'] ?? null;
@@ -249,12 +242,30 @@ class BanksyPaymentController extends Controller
             // Simulate delay
             sleep(20);
             $updateData = [
-                'merchant_rate' => $results,
                 'payment_status' => $orderStatus,
                 'response_data' => $results,
             ];
             PaymentDetail::where('TransId', $transactionId)->update($updateData);
             echo "Transaction updated successfully!";
+
+            //Call webhook API START
+            $paymentDetail = PaymentDetail::where('TransId', $transactionId)->first();
+            $callbackUrl = $paymentDetail->callback_url;
+            $postData = [
+                'merchant_code' => $paymentDetail->merchant_code,
+                'referenceId' => $paymentDetail->transaction_id,
+                'transaction_id' => $paymentDetail->fourth_party_transection,
+                'amount' => $paymentDetail->amount,
+                'Currency' => $paymentDetail->Currency,
+                'customer_name' => $paymentDetail->customer_name,
+                'payment_status' => $paymentDetail->payment_status,
+                'created_at' => $paymentDetail->created_at,
+            ];
+            if ($paymentDetail->callback_url != null) {
+                return Http::post($paymentDetail->callback_url, $postData);
+            }
+             //Call webhook API START
+
         }else{
             return response()->json(['error' => 'Data Not Found or Invalid Request!'], 400);
         }

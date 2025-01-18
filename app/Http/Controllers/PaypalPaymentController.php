@@ -47,12 +47,11 @@ class PaypalPaymentController extends Controller
                     'transaction_id' => $data['id'],
                     'fourth_party_transection' => $request->payin_request_id ?? $request->transaction_id,
                     'customer_name' => $request->customer_name,
-                    'callback_url' => $data['links']['1']['href'],
+                    'receipt_url' => $data['links']['1']['href'],
                     'amount' => $request->price,
                     'payment_method' => "card",
-                    'customer_id' => ! empty($request->customer_id) ? $request->customer_id : 0,
                     'Currency' => $request->curr,
-                    'ErrDesc' => 'Paypal Gateway',
+                    'gateway_name' => 'Paypal Gateway',
                 ]);
                 // Code for Inser data into DB END
     			$response->redirect();
@@ -81,8 +80,9 @@ class PaypalPaymentController extends Controller
                 PaymentDetail::where('transaction_id', $arr['id'])
                 ->update([
                     'response_data' => json_encode($arr, true),
+                    'TransId' => $arr['id'],
                     'created_at' => $created_date,
-                    'customer_id' => $arr['payer']['payer_info']['payer_id'],
+                    'callback_url' => $arr['payer']['payer_info']['payer_id'],
                     'payment_status' => 'success',
                 ]);
                 // echo "<pre>"; print_r($arr); die;
