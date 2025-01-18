@@ -228,6 +228,41 @@ class BanksyPaymentController extends Controller
         echo "<pre>";  print_r($data); die;
     }
 
+    public function bnkWebhookNotifiication(Request $request)
+    {
+        // Decode the JSON payload automatically
+        $results = $request->json()->all();
+       
+        if(!empty($results)) {
+            // Extract data
+            $transactionId = $results['paymentId'] ?? null;
+            // date_default_timezone_set('Asia/Phnom_Penh');
+            // $ptTimestamp = now()->format('Y-m-d h:i:sA');
+            $status = $results['paymentRaw']['status'] ?? 'unknown';
+            if ($status === 'success') {
+                $orderStatus = 'Success';
+            } elseif (in_array($status, ['awaiting', 'pending'])) {
+                $orderStatus = 'Processing';
+            } else {
+                $orderStatus = 'Failed';
+            }
+            // Simulate delay
+            sleep(20);
+            $updateData = [
+                'merchant_rate' => $results,
+                'payment_status' => $orderStatus,
+                'response_data' => $results,
+            ];
+            PaymentDetail::where('TransId', $transactionId)->update($updateData);
+            echo "Transaction updated successfully!";
+        }else{
+            return response()->json(['error' => 'Data Not Found or Invalid Request!'], 400);
+        }
+
+
+
+    }
+
     public function getGatewayParameters($gatewayPaymentChannel): array
     {
         $arrayData = [];
