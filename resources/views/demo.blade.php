@@ -8,19 +8,20 @@ $referenceNo="GZTRN".time().generateRandomString(3);
         return $randomString;
     }
 // $url = "http://127.0.0.1:8000/api/bnk/checkout";
-$url = "https://payment.pay2rax.com/api/bnk/checkout";
+$apiUrl = "https://payment.pay2rax.com/api/bnk/checkout";
 
 $data = [
     'merchant_code' => 'testmerchant005',
     'product_id' => '19',
     'referenceId' => $referenceNo, 
-    'callback_url' => 'https://payin.pay2rax.com/payin_response_url.php',
+    // 'callback_url' => 'http://127.0.0.1:8000/depositResponse',
+    'callback_url' => 'https://payment.pay2rax.com/depositResponse',
     'currency' => 'USD', 
     'amount' => '100', 
     'customer_email' => 'customer@example.com', 
     'customer_name' => 'John Doe', 
 ];
-$fullUrl = $url . '?' . http_build_query($data);
+$fullUrl = $apiUrl . '?' . http_build_query($data);
 ?>
 <!DOCTYPE html>
 <html lang="en">
