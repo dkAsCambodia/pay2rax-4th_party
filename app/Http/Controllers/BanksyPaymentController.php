@@ -108,7 +108,7 @@ class BanksyPaymentController extends Controller
         $postData = [
             'amount' => $request->amount,
             'currency' => $request->currency,
-            'successCallback' => url('bnkdeposit_success/'.$frtransaction), 
+            'successCallback' => url('bnkdeposit_success/'.$frtransaction),  
             'failureCallback' => url('bnkdeposit_fail/'.$frtransaction),
             'currencyType' => $res['currencyType'],
             'isKycOptional' => true,
