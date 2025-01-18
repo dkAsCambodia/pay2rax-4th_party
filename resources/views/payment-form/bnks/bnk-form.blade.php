@@ -72,7 +72,7 @@
                             <div class="row mb-4">
                                 <label for="price" class="col-md-3 form-label">Amount</label>
                                 <div class="col-md-9">
-									<input class="form-control" required name="amount" placeholder="Enter your Amount" value="100" type="text">
+									<input class="form-control" required name="amount" placeholder="Enter your Amount" value="1000" type="text">
                                 </div>
                             </div>
                             <div class="row mb-4">
