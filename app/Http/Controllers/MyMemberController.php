@@ -84,7 +84,8 @@ class MyMemberController extends Controller
         $callbackUrl = $paymentDetail->callback_url;
         $postData = [
             'merchant_code' => $paymentDetail->merchant_code,
-            'transaction_id' => $paymentDetail->transaction_id,
+            'referenceId' => $paymentDetail->transaction_id,
+            'transaction_id' => $paymentDetail->fourth_party_transection,
             'amount' => $paymentDetail->amount,
             'Currency' => $paymentDetail->Currency,
             'customer_name' => $paymentDetail->customer_name,
