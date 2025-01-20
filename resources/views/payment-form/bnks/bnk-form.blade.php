@@ -93,7 +93,7 @@
                                 <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..."> <!-- Replace with your spinner image URL -->
                             </div>
                             <div class="text-center">
-                                <button type="submit" class="btn btn-primary btn-block">Pay Now</button>
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-block">Pay Now</button>
                             </div>
                         </form>
                     </div>
@@ -106,6 +106,9 @@
     const form = document.getElementById('paymentForm');
     const spinnerContainer = document.querySelector('.spinner-container');
     form.addEventListener('submit', function () {
+        var btn = $("#submitBtn");
+                btn.html('<span class="spinner-border spinner-border-sm"></span> Processing...'); 
+                btn.prop("disabled", true);
         spinnerContainer.style.display = 'flex'; // Show spinner with opaque background
     });
 </script>
