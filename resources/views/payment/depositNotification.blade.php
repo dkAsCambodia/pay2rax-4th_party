@@ -123,6 +123,7 @@
     @endif
 
     <form name="member_signup" action="{{ $callbackUrl }}" method="post">
+        @csrf
         @foreach ($postData as $key => $item)
             <input type="hidden" name="{{ $key }}" value="{{ $item }}">
         @endforeach
