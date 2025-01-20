@@ -408,7 +408,7 @@ Route::controller(BanksyPaymentController::class)->group(function () {
     Route::get('/bnkdeposit_fail/{bnksessTransId}', 'bnkdeposit_fail');
 
     Route::get('/bnkCardDeposit', 'bnkCardDepositform');
-    Route::post('depositResponse', 'depositResponse')->name('depositResponse');
+    // Route::post('depositResponse', 'depositResponse')->name('depositResponse');
 });
 
 Route::get('/bnksdemo', function () {

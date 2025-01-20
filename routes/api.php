@@ -53,7 +53,8 @@ Route::controller(PaypalPaymentController::class)->group(function () {
 
 Route::controller(BanksyPaymentController::class)->group(function () {
     Route::get('bnk/checkout', 'banksyCheckout')->name('apiroute.banksy.checkout');
-    Route::post('/bnkWebhookNotifiication', 'bnkWebhookNotifiication');  
+    Route::post('/bnkWebhookNotifiication', 'bnkWebhookNotifiication'); 
+    Route::post('depositResponse', 'depositResponse')->name('apiroute.depositResponse'); 
 });
 
 Route::controller(StripePaymentController::class)->group(function () {
