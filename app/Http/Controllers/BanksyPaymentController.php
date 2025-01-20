@@ -268,15 +268,15 @@ class BanksyPaymentController extends Controller
                     // $jsonData = $response->json();
                     //   echo "<pre>";  print_r($jsonData); die;
 
-                    $response = Http::post('http://127.0.0.1:8000/api/depositResponse', [
-                        "merchant_code" => "678e07e9017fa7c917fb1108",
-                        "referenceId" => "673d62105e93825e3d2adb3b",
-                        "transaction_id" => "ck_test_3b680ac1-4d0a-4fc0-a560-37c3ccecd616",
-                        "amount" => 500,
-                        "currency" => "THB",
-                        "customer_name" => "http://localhost/pay2rax-payin/api/bnks/depositSuccess.php",
-                        "payment_status" => "failed",
-                        "created_at" => "2024-11-20T04:14:09.449Z"
+                    $response = Http::post($paymentDetail->callback_url, [
+                        'merchant_code' => $paymentDetail->merchant_code,
+                        'referenceId' => $paymentDetail->transaction_id,
+                        'transaction_id' => $paymentDetail->fourth_party_transection,
+                        'amount' => $paymentDetail->amount,
+                        'Currency' => $paymentDetail->Currency,
+                        'customer_name' => $paymentDetail->customer_name,
+                        'payment_status' => $paymentDetail->payment_status,
+                        'created_at' => $paymentDetail->created_at,
                     ]);
                     echo $response->body(); die;
                     
