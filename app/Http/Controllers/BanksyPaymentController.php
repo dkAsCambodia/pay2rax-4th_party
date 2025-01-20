@@ -218,7 +218,6 @@ class BanksyPaymentController extends Controller
     public function depositResponse(Request $request)
     {
         $data = $request->all();
-        unset($data['_token']);
         echo "<pre>";  print_r($data); die;
     }
 
@@ -261,9 +260,32 @@ class BanksyPaymentController extends Controller
                 'payment_status' => $paymentDetail->payment_status,
                 'created_at' => $paymentDetail->created_at,
             ];
-            if ($paymentDetail->callback_url != null) {
-                return Http::post($paymentDetail->callback_url, $postData);
+            // return view('payment.payment_status', compact('request', 'postData', 'callbackUrl'));
+            // echo "<pre>";  print_r($postData); die;
+            try {
+                if ($paymentDetail->callback_url != null) {
+                    // $response = Http::timeout(60)->post($paymentDetail->callback_url, $postData);
+                    // $jsonData = $response->json();
+                    //   echo "<pre>";  print_r($jsonData); die;
+
+                    $response = Http::post('http://127.0.0.1:8000/api/depositResponse', [
+                        "merchant_code" => "678e07e9017fa7c917fb1108",
+                        "referenceId" => "673d62105e93825e3d2adb3b",
+                        "transaction_id" => "ck_test_3b680ac1-4d0a-4fc0-a560-37c3ccecd616",
+                        "amount" => 500,
+                        "currency" => "THB",
+                        "customer_name" => "http://localhost/pay2rax-payin/api/bnks/depositSuccess.php",
+                        "payment_status" => "failed",
+                        "created_at" => "2024-11-20T04:14:09.449Z"
+                    ]);
+                    echo $response->body(); die;
+                    
+
+                }
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Failed to call webhook','message' => $e->getMessage()], 500);
             }
+            
              //Call webhook API START
 
         }else{
