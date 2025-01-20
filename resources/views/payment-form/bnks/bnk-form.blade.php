@@ -58,7 +58,7 @@
                                 <div class="col-md-9">
 										<select class="form-control select2-show-search form-select  text-dark" id="currency" name="currency" required data-placeholder="---" tabindex="-1" aria-hidden="true">
 											<option value="">---</option>
-											<option value="EUR">EUR</option>
+											<option value="EUR" selected>EUR</option>
 											<option value="MYR">MYR</option>
                                             <option value="THB">THB</option>
                                             <option value="VND">VND</option>
