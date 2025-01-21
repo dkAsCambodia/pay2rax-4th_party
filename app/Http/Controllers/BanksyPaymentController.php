@@ -241,11 +241,11 @@ class BanksyPaymentController extends Controller
             // $ptTimestamp = now()->format('Y-m-d h:i:sA');
             $status = $results['paymentRaw']['status'] ?? 'unknown';
             if ($status === 'success') {
-                $orderStatus = 'Success';
+                $orderStatus = 'success';
             } elseif (in_array($status, ['awaiting', 'pending'])) {
-                $orderStatus = 'Processing';
+                $orderStatus = 'processing';
             } else {
-                $orderStatus = 'Failed';
+                $orderStatus = 'failed';
             }
             // Simulate delay
             sleep(20);
