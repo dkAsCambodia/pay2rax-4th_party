@@ -269,32 +269,15 @@ class BanksyPaymentController extends Controller
                 'payment_status' => $paymentDetail->payment_status,
                 'created_at' => $paymentDetail->created_at,
             ];
-            // return view('payment.payment_status', compact('request', 'postData', 'callbackUrl'));
             // echo "<pre>";  print_r($postData); die;
             try {
                 if ($paymentDetail->callback_url != null) {
-                    // $response = Http::timeout(60)->post($paymentDetail->callback_url, $postData);
-                    // $jsonData = $response->json();
-                    //   echo "<pre>";  print_r($jsonData); die;
-
-                    $response = Http::post($paymentDetail->callback_url, [
-                        'merchant_code' => $paymentDetail->merchant_code,
-                        'referenceId' => $paymentDetail->transaction_id,
-                        'transaction_id' => $paymentDetail->fourth_party_transection,
-                        'amount' => $paymentDetail->amount,
-                        'Currency' => $paymentDetail->Currency,
-                        'customer_name' => $paymentDetail->customer_name,
-                        'payment_status' => $paymentDetail->payment_status,
-                        'created_at' => $paymentDetail->created_at,
-                    ]);
+                    $response = Http::post($paymentDetail->callback_url, $postData);
                     echo $response->body(); die;
-                    
-
                 }
             } catch (\Exception $e) {
                 return response()->json(['error' => 'Failed to call webhook','message' => $e->getMessage()], 500);
             }
-            
              //Call webhook API START
 
         }else{
