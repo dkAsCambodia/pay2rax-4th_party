@@ -98,7 +98,7 @@
                 <button class="btn_custom" onclick="goBack()">{{ __('messages.Go Back') }}</button>
             </div>
         </div>
-    @elseif ($postData['payment_status'] == 'processing')
+    @elseif ($postData['payment_status'] == 'processing' || $postData['payment_status'] == 'Processing' || $postData['payment_status'] == 'PROCESSING')
         <div style="text-align: center; padding: 40px 0;">
             <div class="card card-class">
                 <div style="border-radius:200px; height:200px; width:200px; background: #F8FAF5; margin:0 auto;">
