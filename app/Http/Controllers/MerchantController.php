@@ -363,10 +363,12 @@ class MerchantController extends Controller
         $paymentUrl = PaymentUrl::where('status', 'Enable')->get();
         $paymentMethod = PaymentMethod::where('status', 'Enable')->get();
         $merchantName = Merchant::where('id', $merchantId)->first()->merchant_name;
+        $GatewayPaymentChannel = GatewayPaymentChannel::where('status', 'Enable')->get();
 
         if ($request->ajax()) {
             $data = PaymentMap::query()
                 ->with('methodPayment:id,method_name')
+                ->with('getGatewayPaymentChanneldata:id,channel_id')
                 ->where('merchant_id', $merchant->id)
                 ->select(
                     'id',
@@ -383,11 +385,14 @@ class MerchantController extends Controller
                     'channel_mode',
                     'gateway_payment_channel_id',
                     'payment_method_id'
-                );
+                )->orderBy('id', 'DESC');
             // dd($data->get());
             return DataTables::of($data)
                 ->addColumn('payment_method_name', function ($data) {
                     return $data->methodPayment->method_name;
+                })
+                ->addColumn('Channel', function ($data) {
+                    return $data->getGatewayPaymentChanneldata->channel_id;
                 })
                 ->addColumn('cny_range', function ($data) {
                     return number_format($data->cny_min, 2) . " - " . number_format($data->cny_max, 2);

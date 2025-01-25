@@ -68,7 +68,7 @@
                                         <tr>
                                             <th>{{ __('messages.Product ID') }}</th>
                                             <th>{{ __('messages.Payment Method') }}</th>
-
+                                            <th>{{ __('messages.Channel') }}</th>
                                             <th>{{ __('messages.Min Value') }}</th>
                                             <th>{{ __('messages.Max Value') }}</th>
                                             {{-- <th>{{ __('messages.Amount') }}</th> --}}
@@ -510,6 +510,9 @@
                     },
                     {
                         data: 'payment_method_name'
+                    },
+                    {
+                    data: 'Channel'
                     },
                     {
                         data: 'min_value'

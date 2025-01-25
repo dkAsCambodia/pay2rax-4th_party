@@ -43,6 +43,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PaypalPaymentController;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\BanksyPaymentController;
+use App\Http\Controllers\XprizoPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -401,16 +402,16 @@ Route::controller(StripePaymentController::class)->group(function () {
     Route::post('stripe/checkoutForm', 'stripeCheckoutForm')->name('Stripe: checkoutForm');
 });
 // ------------------------------ Gtech DK END ---------------------------------//
-
-
 Route::controller(BanksyPaymentController::class)->group(function () {
+    Route::get('/bnkCardDeposit', 'bnkCardDepositform');            // Deposit form
     Route::get('/bnkdeposit_success/{bnksessTransId}', 'bnkdeposit_success');
     Route::get('/bnkdeposit_fail/{bnksessTransId}', 'bnkdeposit_fail');
-
-    Route::get('/bnkCardDeposit', 'bnkCardDepositform');
-    // Route::post('depositResponse', 'depositResponse')->name('depositResponse');
 });
-
 Route::get('/bnksdemo', function () {
     return view('payment-form.bnks.demo');
+});
+
+
+Route::controller(XprizoPaymentController::class)->group(function () {
+    Route::get('/xpzDeposit', 'xpzDepositform');            // Deposit form
 });

@@ -7,11 +7,12 @@ use App\Http\Controllers\MerchantController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentEcommController;
+use App\Http\Controllers\PaymentMapController;
+use App\Http\Controllers\PayoutController;
 use App\Http\Controllers\PaypalPaymentController;
 use App\Http\Controllers\BanksyPaymentController;
 use App\Http\Controllers\StripePaymentController;
-use App\Http\Controllers\PaymentMapController;
-use App\Http\Controllers\PayoutController;
+use App\Http\Controllers\XprizoPaymentController;
 
 /*
 |--------------------------------------------------------------------------
