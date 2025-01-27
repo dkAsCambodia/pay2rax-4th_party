@@ -25,7 +25,7 @@ class XprizoPaymentController extends Controller
     }
 
 
-    public function banksyCheckout(Request $request)
+    public function xpzDepositApifun(Request $request)
     {
         // echo "<pre>";  print_r($request->all()); die;
         $arrayData = [];
@@ -106,66 +106,154 @@ class XprizoPaymentController extends Controller
         }
         $res = array_merge($arrayData, $getGatewayParameters);
         $frtransaction = $this->generateUniqueCode();
+        //  echo "<pre>";  print_r($res); die;
         // Call Curl API code START
-        // Session::put('bnksessTransId', $frtransaction);
-        $headers = [
-            'Content-Type' => 'application/json', 
-            'X-AUTH' => $res['apiKey'],
-        ];
-        $postData = [
-            'amount' => $request->amount,
-            'currency' => $request->currency,
-            'successCallback' => url('bnkdeposit_success/'.$frtransaction),  
-            'failureCallback' => url('bnkdeposit_fail/'.$frtransaction),
-            'currencyType' => $res['currencyType'],
-            'isKycOptional' => true,
-            'customerEmail' => $request->customer_email,
-        ];
-        $response = Http::withHeaders($headers)->post($res['api_url'], $postData);
-        $jsonData = $response->json();
-        // Redirect to the payment link
-        if (isset($jsonData['paymentLink'])) {
-            //Insert data into DB
-            $res['customer_email'] = $request->customer_email;  
-            if (getenv('HTTP_CLIENT_IP')) {
-                $ip = getenv('HTTP_CLIENT_IP');
-            }
-            if (getenv('HTTP_X_REAL_IP')) {
-                $ip = getenv('HTTP_X_REAL_IP');
-            } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
-                $ip = getenv('HTTP_X_FORWARDED_FOR');
-                $ips = explode(',', $ip);
-                $ip = $ips[0];
-            } elseif (getenv('REMOTE_ADDR')) {
-                $ip = getenv('REMOTE_ADDR');
-            } else {
-                $ip = '0.0.0.0';
-            }
-            $addRecord = [
-                'agent_id' => $merchantData->agent_id,
-                'merchant_id' => $merchantData->id,
-                'merchant_code' => $request->merchant_code,
-                'transaction_id' => $request->referenceId,
-                'fourth_party_transection' => $frtransaction,
-                'callback_url' => $request->callback_url,
-                'amount' => $request->amount,
-                'Currency' => $request->currency,
-                'product_id' => $request->product_id,
-                'payment_channel' => $gatewayPaymentChannel->id,
-                'payment_method' => $paymentMethod->method_name,
-                'request_data' => json_encode($res),
-                'gateway_name' => 'BankSy Gateway',
-                'customer_name' => $request->customer_name,
-                'customer_email' => $request->customer_email,
-                // 'payin_arr' => '',
-                'receipt_url' => $jsonData['paymentLink'],
-            ];
-              // echo "<pre>";  print_r($addRecord); die;
-            PaymentDetail::create($addRecord);
-            return redirect($jsonData['paymentLink']);
+        $expiration = $request->expiration;
+        if(empty($expiration)){
+            $expiryMonth =$request->expiryMonth;
+            $expiryYear =$request->expiryYear;
         }else{
-            return back()->with('error', 'Payment link not found.');
+            list($expiryMonth, $expiryYear) = explode('/', $expiration);
+        }
+        $response = Http::withHeaders([
+            'x-api-version' => '1.0',
+            'x-api-key' => $res['apiKey'],
+            'Accept' => 'text/plain',
+            'Content-Type' => 'application/json',
+        ])->post($res['api_url'], [
+            'description' => 'success',
+            'reference' => $frtransaction,
+            'amount' => $request->amount,
+            'currencyCode' => $request->Currency,
+            'accountId' => $res['accountId'],
+            'transferAccountId' => $res['transferAccountId'],
+            'customer' => $request->customer_name,
+            'creditCard' => [
+                'name' => $request->customer_name,
+                'number' => $request->card_number,
+                'expiryMonth' => $expiryMonth ?? $request->expiryMonth,
+                'expiryYear' => $expiryYear ?? $request->expiryYear,
+                'cvv' => $request->cvv,
+            ],
+            'productCode' => '',
+            'redirect' => url('xpz/deposit/gatewayResponse'), 
+            'sourceType' => '',
+        ]);
+
+        $result = $response->json();
+        if (isset($result['status'])) {
+            if ($result['status'] === 'Redirect') {
+                     //Insert data into DB
+                     $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+                     $addRecord = [
+                         'agent_id' => $merchantData->agent_id,
+                         'merchant_id' => $merchantData->id,
+                         'merchant_code' => $request->merchant_code,
+                         'transaction_id' => $request->referenceId,
+                         'fourth_party_transection' => $frtransaction,
+                         'callback_url' => $request->callback_url,
+                         'amount' => $request->amount,
+                         'Currency' => $request->Currency,
+                         'product_id' => $request->product_id,
+                         'payment_channel' => $gatewayPaymentChannel->id,
+                         'payment_method' => $paymentMethod->method_name,
+                         'request_data' => json_encode($res),
+                         'gateway_name' => 'Xprizo card payment',
+                         'customer_name' => $request->customer_name,
+                         'payin_arr' => json_encode($result),
+                         'receipt_url' => $result['value'],
+                         'ip_address' => $client_ip,      
+                     ];
+                     // echo "<pre>";  print_r($addRecord); die;
+                    PaymentDetail::create($addRecord);
+                    return redirect($result['value']);
+            } else {
+                echo "Failed"; echo "<pre>"; print_r($result); 
+            }
+        } else {
+            echo "Unexpected Response"; echo "<pre>"; print_r($result); die;
+        }
+    }
+
+    public function xpzDepositGatewayResponse(Request $request)
+    {
+        $response = $request->all();
+        $RefId = $response['reference'] ?? null;
+        $Transactionid = $response['key'] ?? null;
+    
+        $orderstatus = match ($response['status'] ?? null) {
+            'Active' => 'success',
+            'Pending' => 'pending',
+            default => 'failed',
+        };
+
+        $updateData = [
+            'TransId' => $Transactionid,
+            'payment_status' => $orderstatus,
+            'payin_arr' => json_encode($response)
+        ];
+        PaymentDetail::where('fourth_party_transection', $RefId)->update($updateData);
+        $paymentDetail = PaymentDetail::where('fourth_party_transection', $RefId)->first();
+        $callbackUrl = $paymentDetail->callback_url;
+        $postData = [
+            'merchant_code' => $paymentDetail->merchant_code,
+            'referenceId' => $paymentDetail->transaction_id,
+            'transaction_id' => $paymentDetail->fourth_party_transection,
+            'amount' => $paymentDetail->amount,
+            'Currency' => $paymentDetail->Currency,
+            'customer_name' => $paymentDetail->customer_name,
+            'payment_status' => $paymentDetail->payment_status,
+            'created_at' => $paymentDetail->created_at,
+        ];
+
+        return view('payment.payment_status', compact('request', 'postData', 'callbackUrl'));
+    }
+
+
+
+    public function getGatewayParameters($gatewayPaymentChannel): array
+    {
+        $arrayData = [];
+        //   dd($gatewayPaymentChannel->gateway_account_method_id);
+        $gatewayAccountMethod = GatewayAccountMethod::where('method_id', $gatewayPaymentChannel->gateway_account_method_id)->where('gateway_account_id', $gatewayPaymentChannel->gateway_account_id)->first();
+        //dd($gatewayAccountMethod);
+        if (! $gatewayAccountMethod) {
+            return 'gatewayAccountMethod not exist';
+        }
+        if ($gatewayAccountMethod->status == 'Disable') {
+            return 'gatewayAccountMethod is Disable';
+        }
+        // return $gatewayAccountMethod;
+        $gatewayAccount = GatewayAccount::where('id', $gatewayPaymentChannel->gateway_account_id)->first(); // web site details
+        $arrayData['e_comm_website'] = $gatewayAccount->e_comm_website;
+        if (! $gatewayAccount) {
+            return 'GatewayAccount not exist';
+        }
+        if ($gatewayAccount->status == 'Disable') {
+            return 'GatewayAccount is Disable';
         }
 
+        $parameterSetting = ParameterSetting::where('channel_id', $gatewayAccount->gateway)->get();
+
+        $parameterValue = ParameterValue::where('gateway_account_method_id', $gatewayAccountMethod->id)->get();
+        //dd($parameterValue);
+        foreach ($parameterSetting as $parameterSettingVal) {
+            foreach ($parameterValue as $parameterValueVal) {
+                if ($parameterValueVal->parameter_setting_id == $parameterSettingVal->id) {
+                    // $arrayData[str_replace(' ', '_', strtolower($parameterSettingVal->parameter_name))] = $parameterValueVal->parameter_setting_value;
+                    $arrayData[$parameterSettingVal->parameter_name] = $parameterValueVal->parameter_setting_value;
+                }
+            }
+        }
+
+        return $arrayData;
+    }
+
+    public function generateUniqueCode()
+    {
+        $mytime = Carbon::now();
+        $currentDateTime = str_replace(' ', '', $mytime->parse($mytime->toDateTimeString())->format('Ymd His'));
+        $fourth_party_transection = $currentDateTime.random_int(1000, 9999);
+        return 'TR'.$fourth_party_transection;
     }
 }

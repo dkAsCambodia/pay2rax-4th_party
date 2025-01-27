@@ -120,20 +120,7 @@ class BanksyPaymentController extends Controller
         if (isset($jsonData['paymentLink'])) {
             //Insert data into DB
             $res['customer_email'] = $request->customer_email;  
-            if (getenv('HTTP_CLIENT_IP')) {
-                $ip = getenv('HTTP_CLIENT_IP');
-            }
-            if (getenv('HTTP_X_REAL_IP')) {
-                $ip = getenv('HTTP_X_REAL_IP');
-            } elseif (getenv('HTTP_X_FORWARDED_FOR')) {
-                $ip = getenv('HTTP_X_FORWARDED_FOR');
-                $ips = explode(',', $ip);
-                $ip = $ips[0];
-            } elseif (getenv('REMOTE_ADDR')) {
-                $ip = getenv('REMOTE_ADDR');
-            } else {
-                $ip = '0.0.0.0';
-            }
+            $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
             $addRecord = [
                 'agent_id' => $merchantData->agent_id,
                 'merchant_id' => $merchantData->id,
@@ -152,6 +139,7 @@ class BanksyPaymentController extends Controller
                 'customer_email' => $request->customer_email,
                 // 'payin_arr' => '',
                 'receipt_url' => $jsonData['paymentLink'],
+                'ip_address' => $client_ip,
             ];
               // echo "<pre>";  print_r($addRecord); die;
             PaymentDetail::create($addRecord);
