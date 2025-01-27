@@ -58,6 +58,13 @@ Route::controller(BanksyPaymentController::class)->group(function () {
     Route::post('depositResponse', 'depositResponse')->name('apiroute.depositResponse'); 
 });
 
+Route::controller(XprizoPaymentController::class)->group(function () {
+    Route::get('xpz/deposit/', 'xpzDepositApifun')->name('apiroute.xpz.depositApi');
+    Route::post('xpz/depositResponse', 'xpzDepositResponse')->name('apiroute.xpzDepositResponse'); 
+    // Route::post('/bnkWebhookNotifiication', 'bnkWebhookNotifiication'); 
+   
+});
+
 Route::controller(StripePaymentController::class)->group(function () {
     Route::post('stripe/checkout', 'stripeCheckoutPage')->name('stripe.CheckoutPage');
     

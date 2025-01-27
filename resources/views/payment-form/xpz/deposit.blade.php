@@ -43,10 +43,10 @@
                 <div class="col-xl-12">
                     <div class="auth-form">
                         <h3 class="text-center mb-4"><b>Pay2rax Transfer or Deposit</b></h3>
-                        <form class="form-horizontal" action="{{ route('apiroute.banksy.checkout') }}" method="GET" id="paymentForm">
+                        <form class="form-horizontal" action="{{ route('apiroute.xpz.depositApi') }}" method="GET" id="paymentForm">
                             <input type="hidden" name="merchant_code" value="testmerchant005">
-                            <input type="hidden" name="product_id" value="19">
-                            <input type="hidden" name="callback_url" value="{{ route('apiroute.depositResponse') }}">
+                            <input type="hidden" name="product_id" value="21">
+                            <input type="hidden" name="callback_url" value="{{ route('apiroute.xpzDepositResponse') }}">
 							<div class="row mb-4">
                                 <label for="Reference" class="col-md-3 form-label">Reference ID</label>
                                 <div class="col-md-9">
@@ -56,17 +56,17 @@
                             <div class="row mb-4">
                                 <label for="Currency" class="col-md-3 form-label">Currency</label>
                                 <div class="col-md-9">
-										<select class="form-control select2-show-search form-select  text-dark" id="currency" name="currency" required data-placeholder="---" tabindex="-1" aria-hidden="true">
+										<select class="form-control" name="Currency" required>
 											<option value="">---</option>
 											<option value="EUR" selected>EUR</option>
-											<option value="MYR">MYR</option>
+											{{-- <option value="MYR">MYR</option>
                                             <option value="THB">THB</option>
                                             <option value="VND">VND</option>
-                                            <option value="IDR">IDR</option>
+                                            <option value="IDR">IDR</option> --}}
                                             <option value="USD">USD</option>
-                                            <option value="PHP">PHP</option>
+                                            {{-- <option value="PHP">PHP</option>
                                             <option value="INR">INR</option>
-                                            <option value="CNY">CNY</option>
+                                            <option value="CNY">CNY</option> --}}
 										</select>
                                 </div>
                             </div>
@@ -77,15 +77,29 @@
                                 </div>
                             </div>
                             <div class="row mb-4">
-                                <label for="customer_name" class="col-md-3 form-label">Customer Name</label>
+                                <label for="customer_name" class="col-md-3 form-label">Card Holder Name</label>
                                 <div class="col-md-9">
-								<input class="form-control" required name="customer_name" id="customer_name" placeholder="Enter Customer Name" type="text" value="">
+								<input class="form-control" required name="customer_name" id="customer_name" placeholder="Enter Card Holder Name" type="text" value="dktesting xprizo">
                                 </div>
                             </div>
-                            <div class="row mb-4">
-                                <label for="customer_email" class="col-md-3 form-label">Customer Email</label>
+                            <div class="row mb-4 hidden cardFiled">
+                                <label for="card_number" class="col-md-3 form-label">Card Number</label>
                                 <div class="col-md-9">
-								<input class="form-control" required name="customer_email" id="customer_email" placeholder="Enter Customer email" type="email" value="" >
+                                    <input type="text" class="form-control " name="card_number" id="card_number" placeholder="Card number" maxlength='16' value="5123817234060000">
+                                </div>
+                            </div>
+                            <div class="row mb-4 hidden cardFiled">
+                                <label for="expiration" class="col-md-3 form-label">Expiration</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control expirationInput" name="expiration" id="expiration"  maxlength='5' placeholder="MM/YY" value="02/26">
+                                    <p class="expirationInput-warning text text-danger" style="display:none">Please fillup
+                                    correct!</p>
+                                </div>
+                            </div>
+                            <div class="row mb-4 hidden cardFiled">
+                                <label for="cvv" class="col-md-3 form-label">CVC</label>
+                                <div class="col-md-9">
+                                    <input type="text" class="form-control" name="cvv" id="cvv" placeholder="Enter your cvv" maxlength='3' value="123">
                                 </div>
                             </div>
                              <!-- Spinner -->
@@ -111,5 +125,44 @@
                 btn.prop("disabled", true);
         spinnerContainer.style.display = 'flex'; // Show spinner with opaque background
     });
+
+    // On keyUp validate Expiry Moth and Year START
+    $(document).ready(function(){
+        $('.expirationInput').on('keyup', function(){
+            var val = $(this).val();
+            // Remove any non-numeric characters
+            val = val.replace(/\D/g,'');
+            if(val.length > 2){
+                // If more than 2 characters, trim it
+                val = val.slice(0,2) + '/' + val.slice(2);
+            }
+            else if (val.length === 2){
+                // If exactly 2 characters, add "/"
+                val = val + '/';
+            }
+            $(this).val(val);
+
+            // Check if the entered date is in the future
+            var today = new Date();
+            var currentYear = today.getFullYear().toString().substr(-2);
+            var currentMonth = today.getMonth() + 1;
+            var enteredYear = parseInt(val.substr(3));
+            var enteredMonth = parseInt(val.substr(0, 2));
+
+            if (enteredYear < currentYear || (enteredYear == currentYear && enteredMonth < currentMonth)) {
+                // Entered date is not in the future, clear the input
+                $('.expirationInput-warning').css("display", "block");
+                $('.expirationInput').addClass("inputerror");
+                $('button.card-btn').prop('disabled', true);
+                // alert("Please enter a future expiry date.");
+            }else{
+                $('.expirationInput-warning').css("display", "none");
+                $('.expirationInput').removeClass("inputerror");
+                $('button.card-btn').prop('disabled', false);
+            }
+        });
+    });
+    // On keyUp validate Expiry Moth and Year END
+
 </script>
 @endsection

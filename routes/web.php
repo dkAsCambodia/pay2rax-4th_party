@@ -410,8 +410,10 @@ Route::controller(BanksyPaymentController::class)->group(function () {
 Route::get('/bnksdemo', function () {
     return view('payment-form.bnks.demo');
 });
-
-
 Route::controller(XprizoPaymentController::class)->group(function () {
     Route::get('/xpzDeposit', 'xpzDepositform');            // Deposit form
+    Route::get('xpz/deposit/gatewayResponse', 'xpzDepositGatewayResponse');       // for gateway response
+});
+Route::get('/xpz/payintest', function () {
+    return view('payment-form.xpz.payintest');
 });
