@@ -210,6 +210,7 @@ class BanksyPaymentController extends Controller
             "Merchant_code : " . $data['merchant_code'] . '<br/>' .
             "ReferenceId : " . $data['referenceId'] . '<br/>' .
             "TransactionId : " . $data['transaction_id'] . '<br/>' .
+            "Type : Deposit" .'<br/>' .
             "Currency : " . $data['Currency'] . '<br/>' .
             "Amount : " . $data['amount'] . '<br/>' .
             "customer_name : " . $data['customer_name'] . '<br/>' .
