@@ -220,13 +220,26 @@ class BanksyPaymentController extends Controller
 
     public function bnkWebhookNotifiication(Request $request)
     {
+        // {
+        //     "paymentId": "6798540ecd9360596386289c",
+        //     "paymentRaw": {
+        //       "id": "6798540ecd9360596386289c",
+        //       "keyUsed": "ck_live_595cd157-e6f2-40e1-8f9e-3361a8618598",
+        //       "amount": 500,
+        //       "currency": "THB",
+        //       "successCallback": "https://payment.pay2rax.com/bnkdeposit_success/TR202501281050378124",
+        //       "failureCallback": "https://payment.pay2rax.com/bnkdeposit_fail/TR202501281050378124",
+        //       "status": "failed",     //success/awaiting/pending
+        //       "environment": "live",
+        //       "createdAt": "2025-01-28T03:50:39.315Z"
+        //     }
+        //   }
+
         // Decode the JSON payload automatically
         $results = $request->json()->all();
         if(!empty($results)) {
             // Extract data
             $transactionId = $results['paymentId'] ?? null;
-            // date_default_timezone_set('Asia/Phnom_Penh');
-            // $ptTimestamp = now()->format('Y-m-d h:i:sA');
             $status = $results['paymentRaw']['status'] ?? 'unknown';
             if ($status === 'success') {
                 $orderStatus = 'success';
