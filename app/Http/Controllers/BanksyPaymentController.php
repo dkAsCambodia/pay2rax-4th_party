@@ -145,7 +145,7 @@ class BanksyPaymentController extends Controller
             PaymentDetail::create($addRecord);
             return redirect($jsonData['paymentLink']);
         }else{
-            return back()->with('error', 'Payment link not found.');
+            echo "Unexpected Response : Payment link not found."; echo "<pre>"; print_r($jsonData); die;
         }
 
     }
