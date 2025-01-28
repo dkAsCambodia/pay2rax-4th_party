@@ -209,6 +209,85 @@ class XprizoPaymentController extends Controller
         return view('payment.payment_status', compact('request', 'postData', 'callbackUrl'));
     }
 
+    public function xpzDepositResponse(Request $request)
+    {
+        $data = $request->all();
+        echo "Transaction Information as follows" . '<br/>' .
+            "Merchant_code : " . $data['merchant_code'] . '<br/>' .
+            "ReferenceId : " . $data['referenceId'] . '<br/>' .
+            "TransactionId : " . $data['transaction_id'] . '<br/>' .
+            "Currency : " . $data['Currency'] . '<br/>' .
+            "Amount : " . $data['amount'] . '<br/>' .
+            "customer_name : " . $data['customer_name'] . '<br/>' .
+            "Datetime : " . $data['created_at'] . '<br/>' .
+            "Status : " . $data['payment_status'];
+         die;
+    }
+
+
+    public function xpzWebhookNotifiication(Request $request)
+    {
+        // {
+        //     "statusType": 3,
+        //     "status": "Rejected",  // New /Accepted/Cancelled
+        //     "description": "Reason for rejection",
+        //     "actionedById": 1,
+        //     "affectedContactIds": [],
+        //     "transaction": {
+        //       "id": 0,
+        //       "createdById": 2,
+        //       "type": "UCD",
+        //       "date": "2021-04-20T20:34:00.7606173+02:00",
+        //       "reference": 234234234,
+        //       "currencyCode": "USD",
+        //       "amount": 100.00
+        //     }
+        // }
+        // Decode the JSON payload automatically
+        $results = $request->json()->all();
+        if(!empty($results)) {
+            $RefID = $results['transaction']['reference'] ?? null;
+            $orderStatus = match ($results['status'] ?? '') {
+                'Accepted' => 'success',
+                'New' => 'processing',
+                default => 'failed',
+            };
+            sleep(10);         // Simulate delay
+            $updateData = [
+                'payment_status' => $orderStatus,
+                'response_data' => json_encode($results),
+            ];
+          
+            PaymentDetail::where('fourth_party_transection', $RefID)->update($updateData);
+            echo "Transaction updated successfully!";
+            //Call webhook API START
+            $paymentDetail = PaymentDetail::where('fourth_party_transection', $RefID)->first();
+            $callbackUrl = $paymentDetail->callback_url;
+            $postData = [
+                'merchant_code' => $paymentDetail->merchant_code,
+                'referenceId' => $paymentDetail->transaction_id,
+                'transaction_id' => $paymentDetail->fourth_party_transection,
+                'amount' => $paymentDetail->amount,
+                'Currency' => $paymentDetail->Currency,
+                'customer_name' => $paymentDetail->customer_name,
+                'payment_status' => $paymentDetail->payment_status,
+                'created_at' => $paymentDetail->created_at,
+            ];
+            
+            try {
+                if ($paymentDetail->callback_url != null) {
+                    $response = Http::post($paymentDetail->callback_url, $postData);
+                    echo $response->body(); die;
+                }
+            } catch (\Exception $e) {
+                return response()->json(['error' => 'Failed to call webhook','message' => $e->getMessage()], 500);
+            }
+             //Call webhook API START
+
+        }else{
+            return response()->json(['error' => 'Data Not Found or Invalid Request!'], 400);
+        }
+    }
 
 
     public function getGatewayParameters($gatewayPaymentChannel): array

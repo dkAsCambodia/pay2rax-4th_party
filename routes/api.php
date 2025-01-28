@@ -61,7 +61,7 @@ Route::controller(BanksyPaymentController::class)->group(function () {
 Route::controller(XprizoPaymentController::class)->group(function () {
     Route::get('xpz/deposit/', 'xpzDepositApifun')->name('apiroute.xpz.depositApi');
     Route::post('xpz/depositResponse', 'xpzDepositResponse')->name('apiroute.xpzDepositResponse'); 
-    // Route::post('/bnkWebhookNotifiication', 'bnkWebhookNotifiication'); 
+    Route::post('/xpzWebhookNotifiication', 'xpzWebhookNotifiication'); 
    
 });
 
