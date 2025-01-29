@@ -10,6 +10,7 @@ use App\Models\Merchant;
 use App\Models\ParameterSetting;
 use App\Models\ParameterValue;
 use App\Models\PaymentDetail;
+use App\Models\SettleRequest;
 use App\Models\PaymentMap;
 use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Http;
@@ -144,7 +145,31 @@ class XprizoPaymentController extends Controller
         if (isset($result['status'])) {
             if ($result['status'] === 'Redirect') {
                      //Insert data into DB
-                     $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+                    //  $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+                    //  $addRecord = [
+                    //      'agent_id' => $merchantData->agent_id,
+                    //      'merchant_id' => $merchantData->id,
+                    //      'merchant_code' => $request->merchant_code,
+                    //      'transaction_id' => $request->referenceId,
+                    //      'fourth_party_transection' => $frtransaction,
+                    //      'callback_url' => $request->callback_url,
+                    //      'amount' => $request->amount,
+                    //      'Currency' => $request->Currency,
+                    //      'product_id' => $request->product_id,
+                    //      'payment_channel' => $gatewayPaymentChannel->id,
+                    //      'payment_method' => $paymentMethod->method_name,
+                    //      'request_data' => json_encode($res),
+                    //      'gateway_name' => 'Xprizo card payment',
+                    //      'customer_name' => $request->customer_name,
+                    //      'payin_arr' => json_encode($result),
+                    //      'receipt_url' => $result['value'],
+                    //      'ip_address' => $client_ip,      
+                    //  ];
+                    //  // echo "<pre>";  print_r($addRecord); die;
+                    // PaymentDetail::create($addRecord);
+                    return redirect($result['value']);
+            } else {
+                   $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
                      $addRecord = [
                          'agent_id' => $merchantData->agent_id,
                          'merchant_id' => $merchantData->id,
@@ -164,11 +189,8 @@ class XprizoPaymentController extends Controller
                          'receipt_url' => $result['value'],
                          'ip_address' => $client_ip,      
                      ];
-                     // echo "<pre>";  print_r($addRecord); die;
                     PaymentDetail::create($addRecord);
-                    return redirect($result['value']);
-            } else {
-                echo "Failed"; echo "<pre>"; print_r($result); 
+               echo "<pre>"; print_r($result); 
             }
         } else {
             echo "Unexpected Response"; echo "<pre>"; print_r($result); die;
@@ -249,8 +271,8 @@ class XprizoPaymentController extends Controller
         if(!empty($results)) {
             $RefID = $results['transaction']['reference'] ?? null;
             $orderStatus = match ($results['status'] ?? '') {
-                'Accepted' => 'success',
-                'New' => 'processing',
+                'Active' => 'success',
+                'Pending' => 'pending',
                 default => 'failed',
             };
             sleep(10);         // Simulate delay
@@ -288,6 +310,205 @@ class XprizoPaymentController extends Controller
         }else{
             return response()->json(['error' => 'Data Not Found or Invalid Request!'], 400);
         }
+    }
+
+    public function xpzWithdrawalform(Request $request)
+    {
+        return view('payment-form.xpz.withdrawal');
+    }
+
+    public function xpzwithdrawApifun(Request $request)
+    {
+        // echo "<pre>";  print_r($request->all()); die;
+        $arrayData = [];
+        $getGatewayParameters = [];
+        $paymentMap = PaymentMap::where('id', $request->product_id)->first();
+        if (! $paymentMap) {
+            return 'product not exist';
+        }
+        if ($paymentMap->status == 'Disable') {
+            return 'product is Disable';
+        }
+        $merchantData=Merchant::where('merchant_code', $request->merchant_code)->first();
+        if (empty($merchantData)) {
+            return 'Invalid Merchants!';
+        }
+
+        if ($paymentMap->channel_mode == 'single') {
+            $gatewayPaymentChannel = GatewayPaymentChannel::where('id', $paymentMap->gateway_payment_channel_id)->first();
+            if (! $gatewayPaymentChannel) {
+                return 'gatewayPaymentChannel not exist';
+            }
+            if ($gatewayPaymentChannel->status == 'Disable') {
+                return 'gatewayPaymentChannel is Disable';
+            }
+            $paymentMethod = PaymentMethod::where('id', $gatewayPaymentChannel->gateway_account_method_id)->first();
+            $arrayData['method_name'] = $paymentMethod->method_name;
+            if (! $paymentMethod) {
+                return 'paymentMethod not exist';
+            }
+            if ($paymentMethod->status == 'Disable') {
+                return 'paymentMethod is Disable';
+            }
+           
+            if ($gatewayPaymentChannel->risk_control == 1) {
+                // daily transection limit checking
+                $checkLimitationRiskMode = $this->checkLimitationRiskMode($gatewayPaymentChannel, $paymentMap);
+                if ($checkLimitationRiskMode) {
+                    $getGatewayParameters = $this->getGatewayParameters($gatewayPaymentChannel);
+                } else {
+                    return $checkLimitationRiskMode;
+                }
+                // daily transection limit checking
+            } else {
+                $getGatewayParameters = $this->getGatewayParameters($gatewayPaymentChannel);
+            }
+        } else {
+            $gatewayPaymentChannel = GatewayPaymentChannel::whereIn('id', explode(',', $paymentMap->gateway_payment_channel_id))->get();
+            if (! $gatewayPaymentChannel) {
+                return 'gatewayPaymentChannel not exist';
+            }
+
+            foreach ($gatewayPaymentChannel as $item) {
+                if ($item->status == 'Enable') {
+                    $paymentMethod = PaymentMethod::where('id', $item->gateway_account_method_id)->first();
+                    $arrayData['method_name'] = $paymentMethod->method_name;
+                    if (! $paymentMethod) {
+                        return 'paymentMethod not exist';
+                    }
+                    if ($paymentMethod->status == 'Disable') {
+                        return 'paymentMethod is Disable';
+                    }
+                    // gateway_account_method_id
+                    if ($item->risk_control == 1) {
+                        // daily transection limit checking
+                        $checkLimitationRiskMode = $this->checkLimitationRiskMode($item, $paymentMap);
+                        if ($checkLimitationRiskMode) {
+                            $getGatewayParameters = $this->getGatewayParameters($item);
+                            $gatewayPaymentChannel = $item;
+                        } else {
+                            return $checkLimitationRiskMode;
+                        }
+                        // daily transection limit checking
+                    } else {
+                        $getGatewayParameters = $this->getGatewayParameters($item);
+                    }
+                }
+            }
+        }
+        $res = array_merge($arrayData, $getGatewayParameters);
+        $frtransaction = $this->generateUniqueCode();
+        //  echo "<pre>";  print_r($res); die;
+        // Call Curl API code START
+        $expiration = $request->expiration;
+        if(empty($expiration)){
+            $expiryMonth =$request->expiryMonth;
+            $expiryYear =$request->expiryYear;
+        }else{
+            list($expiryMonth, $expiryYear) = explode('/', $expiration);
+        }
+        $response = Http::withHeaders([
+            'x-api-version' => '1.0',
+            'x-api-key' => $res['apiKey'],
+            'Accept' => 'text/plain',
+            'Content-Type' => 'application/json',
+        ])->post($res['api_url'], [
+            'description' => 'success',
+            'reference' => $frtransaction,
+            'amount' => $request->amount,
+            'currencyCode' => $request->Currency,
+            'accountId' => $res['accountId'],
+            'transferAccountId' => $res['transferAccountId'],
+            'customer' => $request->customer_name,
+            'creditCard' => [
+                'name' => $request->customer_name,
+                'number' => $request->card_number,
+                'expiryMonth' => $expiryMonth ?? $request->expiryMonth,
+                'expiryYear' => $expiryYear ?? $request->expiryYear,
+                'cvv' => $request->cvv,
+            ],
+            'productCode' => '',
+            'redirect' => url('xpz/deposit/gatewayResponse'), 
+            'sourceType' => '',
+        ]);
+
+        $result = $response->json();
+        if (isset($result['status'])) {
+
+            $Transactionid = $result['key'];
+            $message = $result['description'];
+            $paymentStatus = match ($results['status'] ?? '') {
+                'Active' => 'success',
+                'Pending' => 'processing',
+                default => 'failed',
+            };
+
+            $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+                $addRecord = [
+                    'settlement_trans_id' => $Transactionid,
+                    'fourth_party_transection' => $frtransaction,
+                    'merchant_track_id' => $request->referenceId,
+                    'agent_id' => $merchantData->agent_id,
+                    'merchant_id' => $merchantData->id,
+                    'merchant_code' => $request->merchant_code,
+                    'callback_url' => $request->callback_url,
+                    'total' => $request->amount,
+                    'customer_account_number' => $request->card_number,
+                    'customer_bank_name' => $request->cvv,
+                    'Currency' => $request->Currency,
+                    'product_id' => $request->product_id,
+                    'payment_channel' => $gatewayPaymentChannel->id,
+                    'payment_method' => $paymentMethod->method_name,
+                    'commission' => 'Xprizo card payment',
+                    'customer_name' => $request->customer_name,
+                    'api_response' => json_encode($result),
+                    'message' => $message,
+                    'ip_address' => $client_ip, 
+                    'status' => $paymentStatus,
+                ];
+                SettleRequest::create($addRecord);
+
+                $paymentDetail = SettleRequest::where('fourth_party_transection', $frtransaction)->first();
+                $callbackUrl = $paymentDetail->callback_url;
+                $postData = [
+                    'merchant_code' => $paymentDetail->merchant_code,
+                    'referenceId' => $paymentDetail->merchant_track_id,
+                    'transaction_id' => $paymentDetail->fourth_party_transection,
+                    'amount' => $paymentDetail->total,
+                    'Currency' => $paymentDetail->Currency,
+                    'customer_name' => $paymentDetail->customer_name,
+                    'status' => $paymentDetail->status,
+                    'created_at' => $paymentDetail->created_at,
+                    'orderremarks' => $paymentDetail->message,
+                ];
+        
+                // dd($paymentDetail, $paymentDetailUpdate);
+                // if ($paymentDetail->callback_url != null) {
+                //     return Http::post($paymentDetail->callback_url, $postData);
+                // }
+        
+                return view('payout.payout_status', compact('request', 'postData', 'callbackUrl'));
+            //    echo "<pre>"; print_r($result); 
+            
+        } else {
+            echo "Unexpected Response"; echo "<pre>"; print_r($result); die;
+        }
+    }
+
+    public function xpzWithdrawalResponse(Request $request)
+    {
+        $data = $request->all();
+        echo "Transaction Information as follows" . '<br/>' .
+            "Merchant_code : " . $data['merchant_code'] . '<br/>' .
+            "ReferenceId : " . $data['referenceId'] . '<br/>' .
+            "TransactionId : " . $data['transaction_id'] . '<br/>' .
+            "Type : Withdrawal" .'<br/>' .
+            "Currency : " . $data['Currency'] . '<br/>' .
+            "Amount : " . $data['amount'] . '<br/>' .
+            "customer_name : " . $data['customer_name'] . '<br/>' .
+            "Datetime : " . $data['created_at'] . '<br/>' .
+            "Status : " . $data['status'];
+         die;
     }
 
 

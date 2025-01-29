@@ -62,7 +62,9 @@ Route::controller(XprizoPaymentController::class)->group(function () {
     Route::get('xpz/deposit/', 'xpzDepositApifun')->name('apiroute.xpz.depositApi');
     Route::post('xpz/depositResponse', 'xpzDepositResponse')->name('apiroute.xpzDepositResponse'); 
     Route::post('/xpzWebhookNotifiication', 'xpzWebhookNotifiication'); 
-   
+
+    Route::get('xpz/withdrawal/', 'xpzwithdrawApifun')->name('apiroute.xpz.withdrawalApi');
+    Route::post('xpz/withdrawalResponse', 'xpzWithdrawalResponse')->name('apiroute.xpzWithdrawalResponse'); 
 });
 
 Route::controller(StripePaymentController::class)->group(function () {

@@ -413,6 +413,8 @@ Route::get('/bnksdemo', function () {
 Route::controller(XprizoPaymentController::class)->group(function () {
     Route::get('/xpzDeposit', 'xpzDepositform');            // Deposit form
     Route::get('xpz/deposit/gatewayResponse', 'xpzDepositGatewayResponse');       // for gateway response
+    
+    Route::get('/xpzWithdrawal', 'xpzWithdrawalform');            // Deposit form
 });
 Route::get('/xpz/payintest', function () {
     return view('payment-form.xpz.payintest');

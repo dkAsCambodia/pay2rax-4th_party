@@ -111,7 +111,7 @@
         }
         setTimeout(() => {
             document.forms['member_signup'].submit();
-        }, 10000)
+        }, 3000)
     </script>
 </body>
 

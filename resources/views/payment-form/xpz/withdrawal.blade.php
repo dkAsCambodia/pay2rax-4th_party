@@ -16,7 +16,7 @@
     height: 2.5rem !important;
 }
  /* Fullscreen spinner container */
- .spinner-container {
+        .spinner-container {
             display: none;
             position: fixed;
             top: 0;
@@ -42,11 +42,11 @@
             <div class="row no-gutters">
                 <div class="col-xl-12">
                     <div class="auth-form">
-                        <h3 class="text-center mb-4"><b>Pay2rax Transfer or Deposit</b></h3>
-                        <form class="form-horizontal" action="{{ route('apiroute.xpz.depositApi') }}" method="GET" id="paymentForm">
+                        <h3 class="text-center mb-4"><b>Pay2rax Merchant Payout or Withdrawal</b></h3>
+                        <form class="form-horizontal" action="{{ route('apiroute.xpz.withdrawalApi') }}" method="GET" id="paymentForm">
                             <input type="hidden" name="merchant_code" value="testmerchant005">
-                            <input type="hidden" name="product_id" value="21">
-                            <input type="hidden" name="callback_url" value="{{ route('apiroute.xpzDepositResponse') }}">
+                            <input type="hidden" name="product_id" value="22">
+                            <input type="hidden" name="callback_url" value="{{ route('apiroute.xpzWithdrawalResponse') }}">
 							<div class="row mb-4">
                                 <label for="Reference" class="col-md-3 form-label">Reference ID</label>
                                 <div class="col-md-9">
@@ -71,15 +71,15 @@
                                 </div>
                             </div>
                             <div class="row mb-4">
-                                <label for="price" class="col-md-3 form-label">Amount</label>
+                                <label for="price" class="col-md-3 form-label">Amount max (850)</label>
                                 <div class="col-md-9">
-									<input class="form-control" required name="amount" placeholder="Enter your Amount" value="1000" type="text">
+									<input class="form-control" required name="amount" placeholder="Enter your Amount" value="10" type="text">
                                 </div>
                             </div>
                             <div class="row mb-4">
                                 <label for="customer_name" class="col-md-3 form-label">Card Holder Name</label>
                                 <div class="col-md-9">
-								<input class="form-control" required name="customer_name" id="customer_name" placeholder="Enter Card Holder Name" type="text" value="dktesting xprizo" required>
+								<input class="form-control" required name="customer_name" id="customer_name" placeholder="Enter Card Holder Name" type="text" value="dktesting xprizo">
                                 </div>
                             </div>
                             <div class="row mb-4 hidden cardFiled">
@@ -99,7 +99,7 @@
                             <div class="row mb-4 hidden cardFiled">
                                 <label for="cvv" class="col-md-3 form-label">CVC</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control" name="cvv" id="cvv" placeholder="Enter your cvv" maxlength='3' value="123" required>
+                                    <input type="text" class="form-control" name="cvv" id="cvv" placeholder="Enter your cvv" maxlength='3' value="" required>
                                 </div>
                             </div>
                              <!-- Spinner -->
@@ -107,7 +107,7 @@
                                 <img src="https://i.gifer.com/ZZ5H.gif" alt="Loading..."> <!-- Replace with your spinner image URL -->
                             </div>
                             <div class="text-center">
-                                <button type="submit" id="submitBtn" class="btn btn-primary btn-block">Pay Now</button>
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-block">Payout Now</button>
                             </div>
                         </form>
                     </div>
@@ -163,6 +163,5 @@
         });
     });
     // On keyUp validate Expiry Moth and Year END
-
 </script>
 @endsection
