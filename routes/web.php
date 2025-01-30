@@ -419,3 +419,6 @@ Route::controller(XprizoPaymentController::class)->group(function () {
 Route::get('/xpz/payintest', function () {
     return view('payment-form.xpz.payintest');
 });
+Route::get('/xpz/payouttest', function () {
+    return view('payment-form.xpz.payouttest');
+});

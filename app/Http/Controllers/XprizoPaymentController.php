@@ -276,36 +276,41 @@ class XprizoPaymentController extends Controller
                 default => 'failed',
             };
             sleep(10);         // Simulate delay
-            $updateData = [
-                'payment_status' => $orderStatus,
-                'response_data' => json_encode($results),
-            ];
-          
-            PaymentDetail::where('fourth_party_transection', $RefID)->update($updateData);
-            echo "Transaction updated successfully!";
-            //Call webhook API START
-            $paymentDetail = PaymentDetail::where('fourth_party_transection', $RefID)->first();
-            $callbackUrl = $paymentDetail->callback_url;
-            $postData = [
-                'merchant_code' => $paymentDetail->merchant_code,
-                'referenceId' => $paymentDetail->transaction_id,
-                'transaction_id' => $paymentDetail->fourth_party_transection,
-                'amount' => $paymentDetail->amount,
-                'Currency' => $paymentDetail->Currency,
-                'customer_name' => $paymentDetail->customer_name,
-                'payment_status' => $paymentDetail->payment_status,
-                'created_at' => $paymentDetail->created_at,
-            ];
-            
-            try {
-                if ($paymentDetail->callback_url != null) {
-                    $response = Http::post($paymentDetail->callback_url, $postData);
-                    echo $response->body(); die;
+                if(!empty($results['transaction']['type']=='UCD')) {
+                            $updateData = [
+                                'payment_status' => $orderStatus,
+                                'response_data' => json_encode($results),
+                            ];
+                            PaymentDetail::where('fourth_party_transection', $RefID)->update($updateData);
+                            echo "Transaction updated successfully!";
+                            //Call webhook API START
+                            $paymentDetail = PaymentDetail::where('fourth_party_transection', $RefID)->first();
+                            $callbackUrl = $paymentDetail->callback_url;
+                            $postData = [
+                                'merchant_code' => $paymentDetail->merchant_code,
+                                'referenceId' => $paymentDetail->transaction_id,
+                                'transaction_id' => $paymentDetail->fourth_party_transection,
+                                'amount' => $paymentDetail->amount,
+                                'Currency' => $paymentDetail->Currency,
+                                'customer_name' => $paymentDetail->customer_name,
+                                'payment_status' => $paymentDetail->payment_status,
+                                'created_at' => $paymentDetail->created_at,
+                            ];
+                            
+                            try {
+                                if ($paymentDetail->callback_url != null) {
+                                    $response = Http::post($paymentDetail->callback_url, $postData);
+                                    echo $response->body(); die;
+                                }
+                            } catch (\Exception $e) {
+                                return response()->json(['error' => 'Failed to call webhook','message' => $e->getMessage()], 500);
+                            }
+                            //Call webhook API START
+
+                }else{
+
                 }
-            } catch (\Exception $e) {
-                return response()->json(['error' => 'Failed to call webhook','message' => $e->getMessage()], 500);
-            }
-             //Call webhook API START
+            
 
         }else{
             return response()->json(['error' => 'Data Not Found or Invalid Request!'], 400);
@@ -448,6 +453,7 @@ class XprizoPaymentController extends Controller
                     'settlement_trans_id' => $Transactionid,
                     'fourth_party_transection' => $frtransaction,
                     'merchant_track_id' => $request->referenceId,
+                    'gateway_name' => 'Xprizo card Withdrawl',
                     'agent_id' => $merchantData->agent_id,
                     'merchant_id' => $merchantData->id,
                     'merchant_code' => $request->merchant_code,
@@ -459,7 +465,6 @@ class XprizoPaymentController extends Controller
                     'product_id' => $request->product_id,
                     'payment_channel' => $gatewayPaymentChannel->id,
                     'payment_method' => $paymentMethod->method_name,
-                    'commission' => 'Xprizo card payment',
                     'customer_name' => $request->customer_name,
                     'api_response' => json_encode($result),
                     'message' => $message,
