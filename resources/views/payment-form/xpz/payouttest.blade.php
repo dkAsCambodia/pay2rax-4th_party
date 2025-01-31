@@ -8,14 +8,14 @@ $referenceNo = "GZTRN" . time() . (function ($length = 3) {
     }
     return $randomString;
 })();
-$apiUrl = "http://127.0.0.1:8000/api/xpz/withdrawal/";
-// $apiUrl = "https://payment.pay2rax.com/api/xpz/withdrawal/";
+// $apiUrl = "http://127.0.0.1:8000/api/xpz/withdrawal/";
+$apiUrl = "https://payment.pay2rax.com/api/xpz/withdrawal/";
 $data = [
     'merchant_code' => $_GET['merchant_code'], 
     'product_id' => '22',
     'referenceId' => $referenceNo, 
-    'callback_url' => 'http://127.0.0.1:8000/api/xpz/withdrawalResponse',
-    // 'callback_url' => 'https://payment.pay2rax.com/api/xpz/withdrawalResponse',
+    // 'callback_url' => 'http://127.0.0.1:8000/api/xpz/withdrawalResponse',
+    'callback_url' => 'https://payment.pay2rax.com/api/xpz/withdrawalResponse',
     'Currency' => $_GET['Currency'],
     'amount' => $_GET['amount'], 
     'customer_name' => $_GET['card_holder_name'],    // account holder name 
