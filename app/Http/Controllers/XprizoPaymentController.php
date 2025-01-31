@@ -532,7 +532,7 @@ class XprizoPaymentController extends Controller
             "Amount : " . $data['amount'] . '<br/>' .
             "customer_name : " . $data['customer_name'] . '<br/>' .
             "Datetime : " . $data['created_at'] . '<br/>' .
-            "Status : " . $data['status'];
+            "Status : " . $data['payment_status'];
          die;
     }
 
