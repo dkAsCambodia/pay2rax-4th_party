@@ -509,7 +509,7 @@ class XprizoPaymentController extends Controller
                     'amount' => $paymentDetail->total,
                     'Currency' => $paymentDetail->Currency,
                     'customer_name' => $paymentDetail->customer_name,
-                    'status' => $paymentDetail->status,
+                    'payment_status' => $paymentDetail->status,
                     'created_at' => $paymentDetail->created_at,
                     'orderremarks' => $paymentDetail->message,
                 ];
