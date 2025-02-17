@@ -85,7 +85,7 @@
                             <div class="row mb-4 hidden cardFiled">
                                 <label for="card_number" class="col-md-3 form-label">Card Number</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control " name="card_number" id="card_number" placeholder="Card number" maxlength='16' value="5123817234060000" required>
+                                    <input type="text" class="form-control " name="card_number" id="card_number" placeholder="Card number" maxlength='16' value="4444444455551111" required>
                                 </div>
                             </div>
                             <div class="row mb-4 hidden cardFiled">
