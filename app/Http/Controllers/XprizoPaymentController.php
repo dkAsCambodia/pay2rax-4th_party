@@ -143,30 +143,30 @@ class XprizoPaymentController extends Controller
 
         $result = $response->json();
         if (isset($result['status'])) {
-            if ($result['status'] === 'Redirect') {
+            if ($result['status'] == 'Redirect') {
                      //Insert data into DB
-                    //  $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
-                    //  $addRecord = [
-                    //      'agent_id' => $merchantData->agent_id,
-                    //      'merchant_id' => $merchantData->id,
-                    //      'merchant_code' => $request->merchant_code,
-                    //      'transaction_id' => $request->referenceId,
-                    //      'fourth_party_transection' => $frtransaction,
-                    //      'callback_url' => $request->callback_url,
-                    //      'amount' => $request->amount,
-                    //      'Currency' => $request->Currency,
-                    //      'product_id' => $request->product_id,
-                    //      'payment_channel' => $gatewayPaymentChannel->id,
-                    //      'payment_method' => $paymentMethod->method_name,
-                    //      'request_data' => json_encode($res),
-                    //      'gateway_name' => 'Xprizo card payment',
-                    //      'customer_name' => $request->customer_name,
-                    //      'payin_arr' => json_encode($result),
-                    //      'receipt_url' => $result['value'],
-                    //      'ip_address' => $client_ip,      
-                    //  ];
-                    //  // echo "<pre>";  print_r($addRecord); die;
-                    // PaymentDetail::create($addRecord);
+                     $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+                     $addRecord = [
+                         'agent_id' => $merchantData->agent_id,
+                         'merchant_id' => $merchantData->id,
+                         'merchant_code' => $request->merchant_code,
+                         'transaction_id' => $request->referenceId,
+                         'fourth_party_transection' => $frtransaction,
+                         'callback_url' => $request->callback_url,
+                         'amount' => $request->amount,
+                         'Currency' => $request->Currency,
+                         'product_id' => $request->product_id,
+                         'payment_channel' => $gatewayPaymentChannel->id,
+                         'payment_method' => $paymentMethod->method_name,
+                         'request_data' => json_encode($res),
+                         'gateway_name' => 'Xprizo card payment',
+                         'customer_name' => $request->customer_name,
+                         'payin_arr' => json_encode($result),
+                         'receipt_url' => $result['value'],
+                         'ip_address' => $client_ip,      
+                     ];
+                     // echo "<pre>";  print_r($addRecord); die;
+                    PaymentDetail::create($addRecord);
                     return redirect($result['value']);
             } else {
                    $client_ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
@@ -186,6 +186,7 @@ class XprizoPaymentController extends Controller
                          'gateway_name' => 'Xprizo card payment',
                          'customer_name' => $request->customer_name,
                          'payin_arr' => json_encode($result),
+                         'payment_status' => 'failed',
                          'receipt_url' => $result['value'],
                          'ip_address' => $client_ip,      
                      ];
@@ -467,8 +468,8 @@ class XprizoPaymentController extends Controller
         $result = $response->json();
         if (isset($result['status'])) {
 
-            $Transactionid = $result['key'];
-            $message = $result['description'];
+            $Transactionid = $result['key'] ?? '';
+            $message = $result['description'] ?? $result['message'];
             $paymentStatus = match ($results['status'] ?? '') {
                 'Active' => 'success',
                 'Pending' => 'processing',
