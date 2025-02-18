@@ -58,12 +58,12 @@
                                 <div class="col-md-9">
 										<select class="form-control" name="Currency" required>
 											<option value="">---</option>
-											<option value="EUR" selected>EUR</option>
+											<option value="EUR">EUR</option>
 											{{-- <option value="MYR">MYR</option>
                                             <option value="THB">THB</option>
                                             <option value="VND">VND</option>
                                             <option value="IDR">IDR</option> --}}
-                                            <option value="USD">USD</option>
+                                            <option value="USD" selected>USD</option>
                                             {{-- <option value="PHP">PHP</option>
                                             <option value="INR">INR</option>
                                             <option value="CNY">CNY</option> --}}
@@ -85,7 +85,7 @@
                             <div class="row mb-4 hidden cardFiled">
                                 <label for="card_number" class="col-md-3 form-label">Card Number</label>
                                 <div class="col-md-9">
-                                    <input type="text" class="form-control " name="card_number" id="card_number" placeholder="Card number" maxlength='16' value="5123817234060000" required>
+                                    <input type="text" class="form-control " name="card_number" id="card_number" placeholder="Card number" maxlength='16' value="4444444455551111" required>
                                 </div>
                             </div>
                             <div class="row mb-4 hidden cardFiled">
