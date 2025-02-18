@@ -122,13 +122,34 @@ class XprizoPaymentController extends Controller
             'Accept' => 'text/plain',
             'Content-Type' => 'application/json',
         ])->post($res['api_url'], [
-            'description' => 'success',
+            'description' => 'REDIRECT-PASS',
             'reference' => $frtransaction,
             'amount' => $request->amount,
             'currencyCode' => $request->Currency,
             'accountId' => $res['accountId'],
             'transferAccountId' => $res['transferAccountId'],
             'customer' => $request->customer_name,
+            'customerData' => [
+                'name' => $request->customer_name,
+                'email' => $request->customer_email ?? 'default@example.com', // Ensure email is available
+                'mobile' => '+855 69861408', 
+                'birthDate' => '2025-02-03T10:21:01.871Z', 
+                'ipAddress' => request()->ip(), // Fetch user's IP dynamically
+                'address' => [
+                    'address' => 'poipet',
+                    'countryCode' => 'KHM',
+                    'street' => 'poipet',
+                    'city' => 'poipet',
+                    'stateProvinceRegion' => 'Battambang Province',
+                    'zipPostalCode' => '273154'
+                ],
+                'device' => [
+                    'width' => $request->device_width ?? 'unknown',
+                    'height' => $request->device_height ?? 'unknown',
+                    'userAgent' => $request->header('User-Agent') ?? 'unknown',
+                    'colorDepth' => $request->colorDepth ?? 'unknown'
+                ]
+            ],
             'creditCard' => [
                 'name' => $request->customer_name,
                 'number' => $request->card_number,
@@ -142,6 +163,7 @@ class XprizoPaymentController extends Controller
         ]);
 
         $result = $response->json();
+        //  echo "<pre>";  print_r($result); die;
         if (isset($result['status'])) {
             if ($result['status'] == 'Redirect') {
                      //Insert data into DB
@@ -165,7 +187,7 @@ class XprizoPaymentController extends Controller
                          'receipt_url' => $result['value'],
                          'ip_address' => $client_ip,      
                      ];
-                     // echo "<pre>";  print_r($addRecord); die;
+                    //  echo "<pre>";  print_r($addRecord); die;
                     PaymentDetail::create($addRecord);
                     return redirect($result['value']);
             } else {
@@ -187,7 +209,7 @@ class XprizoPaymentController extends Controller
                          'customer_name' => $request->customer_name,
                          'payin_arr' => json_encode($result),
                          'payment_status' => 'failed',
-                         'receipt_url' => $result['value'],
+                         'receipt_url' => $result['message'],
                          'ip_address' => $client_ip,      
                      ];
                     PaymentDetail::create($addRecord);

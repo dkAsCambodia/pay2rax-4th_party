@@ -58,12 +58,12 @@
                                 <div class="col-md-9">
 										<select class="form-control" name="Currency" required>
 											<option value="">---</option>
-											<option value="EUR" selected>EUR</option>
+											<option value="EUR">EUR</option>
 											{{-- <option value="MYR">MYR</option>
                                             <option value="THB">THB</option>
                                             <option value="VND">VND</option>
                                             <option value="IDR">IDR</option> --}}
-                                            <option value="USD">USD</option>
+                                            <option value="USD" selected>USD</option>
                                             {{-- <option value="PHP">PHP</option>
                                             <option value="INR">INR</option>
                                             <option value="CNY">CNY</option> --}}
