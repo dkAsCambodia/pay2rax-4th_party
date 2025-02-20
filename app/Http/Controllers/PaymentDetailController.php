@@ -142,7 +142,7 @@ class PaymentDetailController extends Controller
             $data = PaymentDetail::query()
                 ->leftJoin('payment_maps', 'payment_maps.id', '=', 'payment_details.product_id')
                 //->select('payment_details.id', 'payment_details.created_at', 'payment_details.fourth_party_transection', 'payment_details.transaction_id', 'payment_details.amount', 'payment_details.customer_name', 'payment_details.payment_status', 'payment_details.merchant_code', 'payment_maps.cny_min', 'payment_maps.cny_max', 'payment_details.cny_amount');
-                ->select('payment_details.id','payment_details.created_at', 'payment_details.fourth_party_transection', 'payment_details.transaction_id', 'payment_details.amount', 'payment_details.customer_name', 'payment_details.payment_status', 'payment_details.merchant_code', 'payment_details.Currency');
+                ->select('payment_details.id','payment_details.created_at', 'payment_details.fourth_party_transection', 'payment_details.transaction_id', 'payment_details.amount', 'payment_details.customer_name', 'payment_details.payment_status', 'payment_details.merchant_code', 'payment_details.Currency')->orderBy('payment_details.id', 'desc');
             $tz = Timezone::where('id', $request->timezone)->value('timezone');
 
             return DataTables::of($data)
@@ -160,9 +160,9 @@ class PaymentDetailController extends Controller
                 ->editColumn('created_at', function ($data) use ($tz) {
                     return $data->created_at->timezone($tz)->format('Y-m-d H:i:s');
                 })
-                ->editColumn('amount', function ($data) {
-                    return number_format($data->amount, 2);
-                })
+                // ->editColumn('amount', function ($data) {
+                //     return number_format($data->amount, 2);
+                // })
                 ->addColumn('Currency', function ($data) {
                     return $data->Currency ?? '';
                 })
@@ -264,9 +264,9 @@ class PaymentDetailController extends Controller
                 ->editColumn('created_at', function ($data) use ($tz) {
                     return $data->created_at->timezone($tz)->format('Y-m-d H:i:s');
                 })
-                ->editColumn('amount', function ($data) {
-                    return number_format($data->amount, 2);
-                })
+                // ->editColumn('amount', function ($data) {
+                //     return number_format($data->amount, 2);
+                // })
                 ->editColumn('Currency', function ($data) {
                     return $data->Currency ?? '';
                 }) 
@@ -303,7 +303,7 @@ class PaymentDetailController extends Controller
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 25%; background-color: #6c6c70 !important; color: white;">' . trans("messages.Amount") . '</td>
-                                                    <td>' . number_format($data->amount, 2) . '</td>
+                                                    <td>' . $data->amount . '</td>
                                                     <td style="width: 25%; background-color: #6c6c70 !important; color: white;">' . trans("messages.Created Time") . '</td>
                                                     <td>' . $data?->created_at . '</td>
                                                     
@@ -422,9 +422,9 @@ class PaymentDetailController extends Controller
                 ->editColumn('created_at', function ($data) use ($tz) {
                     return $data->created_at->timezone($tz)->format('Y-m-d H:i:s');
                 })
-                ->editColumn('amount', function ($data) {
-                    return number_format($data->amount, 2);
-                })
+                // ->editColumn('amount', function ($data) {
+                //     return number_format($data->amount, 2);
+                // })
                 ->editColumn('Currency', function ($data) {
                     return $data->Currency ?? '';
                 })
@@ -461,7 +461,7 @@ class PaymentDetailController extends Controller
                                                 </tr>
                                                 <tr>
                                                     <td style="width: 25%; background-color: #6c6c70 !important; color: white;">' . trans("messages.Amount") . '</td>
-                                                    <td>' . number_format($data->amount, 2) . '</td>
+                                                    <td>' . $data->amount . '</td>
                                                     <td style="width: 25%; background-color: #6c6c70 !important; color: white;">' . trans("messages.Created Time") . '</td>
                                                     <td>' . $data?->created_at . '</td>
                                                     
