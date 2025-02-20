@@ -13,6 +13,7 @@ use App\Http\Controllers\PaypalPaymentController;
 use App\Http\Controllers\BanksyPaymentController;
 use App\Http\Controllers\StripePaymentController;
 use App\Http\Controllers\XprizoPaymentController;
+use App\Http\Controllers\IpintPaymentController;
 
 /*
 |--------------------------------------------------------------------------
@@ -65,6 +66,13 @@ Route::controller(XprizoPaymentController::class)->group(function () {
 
     Route::get('xpz/withdrawal/', 'xpzwithdrawApifun')->name('apiroute.xpz.withdrawalApi');
     Route::post('xpz/withdrawalResponse', 'xpzWithdrawalResponse')->name('apiroute.xpzWithdrawalResponse'); 
+});
+
+Route::controller(IpintPaymentController::class)->group(function () {
+    Route::get('ipint/checkout', 'ipintCheckout')->name('apiroute.ipint.checkout');
+    Route::post('ip/depositResponse', 'ipintdepositResponse')->name('apiroute.ipint.depositResponse'); 
+
+    Route::post('/ipintDeposit/WebhookNotifiication', 'ipintDepositWebhookNotifiication'); 
 });
 
 Route::controller(StripePaymentController::class)->group(function () {
