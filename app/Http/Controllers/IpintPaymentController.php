@@ -244,7 +244,7 @@ class IpintPaymentController extends Controller
             "Merchant_code : " . $data['merchant_code'] . '<br/>' .
             "ReferenceId : " . $data['referenceId'] . '<br/>' .
             "TransactionId : " . $data['transaction_id'] . '<br/>' .
-            "Type : Deposit" .'<br/>' .
+            "Type : Crypto Deposit" .'<br/>' .
             "Currency : " . $data['Currency'] . '<br/>' .
             "Amount : " . $data['amount'] . '<br/>' .
             "customer_name : " . $data['customer_name'] . '<br/>' .
@@ -255,43 +255,23 @@ class IpintPaymentController extends Controller
 
     public function ipintDepositWebhookNotifiication(Request $request)
     {
-        // {
-        //     "paymentId": "6798540ecd9360596386289c",
-        //     "paymentRaw": {
-        //       "id": "6798540ecd9360596386289c",
-        //       "keyUsed": "ck_live_595cd157-e6f2-40e1-8f9e-3361a8618598",
-        //       "amount": 500,
-        //       "currency": "THB",
-        //       "successCallback": "https://payment.pay2rax.com/bnkdeposit_success/TR202501281050378124",
-        //       "failureCallback": "https://payment.pay2rax.com/bnkdeposit_fail/TR202501281050378124",
-        //       "status": "failed",     //success/awaiting/pending
-        //       "environment": "live",
-        //       "createdAt": "2025-01-28T03:50:39.315Z"
-        //     }
-        //   }
-
+       // { "invoice_id": 'invoice id', "status": "COMPLETED" }     //FAILED/COMPLETED 
         // Decode the JSON payload automatically
         $results = $request->json()->all();
         if(!empty($results)) {
             // Extract data
-            $transactionId = $results['paymentId'] ?? null;
-            $status = $results['paymentRaw']['status'] ?? 'unknown';
-            if ($status === 'success') {
-                $orderStatus = 'success';
-            } elseif (in_array($status, ['awaiting', 'pending'])) {
-                $orderStatus = 'processing';
-            } else {
-                $orderStatus = 'failed';
-            }
-            // Simulate delay
-            sleep(20);
+            $transactionId = $results['invoice_id'] ?? null;
+            $orderStatus = match ($results['status'] ?? '') {
+                'COMPLETED' => 'success',
+                'FAILED' => 'failed',
+                default => 'failed',
+            };
             $updateData = [
                 'payment_status' => $orderStatus,
-                'response_data' => $results,
+                'response_data' => json_encode($results),
             ];
             PaymentDetail::where('TransId', $transactionId)->update($updateData);
             echo "Transaction updated successfully!";
-
             //Call webhook API START
             $paymentDetail = PaymentDetail::where('TransId', $transactionId)->first();
             $callbackUrl = $paymentDetail->callback_url;

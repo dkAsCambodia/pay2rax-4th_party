@@ -427,3 +427,6 @@ Route::controller(IpintPaymentController::class)->group(function () {
     Route::get('/iptCryptoDeposit', 'ipintDepositform');            // Deposit form
     Route::get('ipint/deposit/gatewayResponse', 'ipintDepositGatewayResponse');       // for gateway response
 });
+Route::get('/ipcrypto/payintest', function () {
+    return view('payment-form.ipint.payintest');
+});

@@ -1,15 +1,15 @@
 <?php
-$referenceNo="GZTRN".time().generateRandomString(3);
-    function generateRandomString($length = 3) {
-        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $charactersLength = strlen($characters);
-        $randomString = '';
-        for ($i = 0; $i < $length; $i++) {$randomString .= $characters[rand(0, $charactersLength - 1)];}
-        return $randomString;
+$referenceNo = "GZTRN" . time() . (function ($length = 3) {
+    $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    $charactersLength = strlen($characters);
+    $randomString = '';
+    for ($i = 0; $i < $length; $i++) {
+        $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
-// $url = "http://127.0.0.1:8000/api/bnk/checkout";
+    return $randomString;
+})();
+// $apiUrl = "http://127.0.0.1:8000/api/bnk/checkout";
 $apiUrl = "https://payment.pay2rax.com/api/bnk/checkout";
-
 $data = [
     'merchant_code' => $_GET['merchant_code'],
     'product_id' => '19',

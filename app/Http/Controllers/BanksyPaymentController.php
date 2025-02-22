@@ -253,7 +253,7 @@ class BanksyPaymentController extends Controller
             sleep(20);
             $updateData = [
                 'payment_status' => $orderStatus,
-                'response_data' => $results,
+                'response_data' => json_encode($results),
             ];
             PaymentDetail::where('TransId', $transactionId)->update($updateData);
             echo "Transaction updated successfully!";

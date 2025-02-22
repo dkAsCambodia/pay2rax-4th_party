@@ -71,7 +71,6 @@ Route::controller(XprizoPaymentController::class)->group(function () {
 Route::controller(IpintPaymentController::class)->group(function () {
     Route::get('ipint/checkout', 'ipintCheckout')->name('apiroute.ipint.checkout');
     Route::post('ip/depositResponse', 'ipintdepositResponse')->name('apiroute.ipint.depositResponse'); 
-
     Route::post('/ipintDeposit/WebhookNotifiication', 'ipintDepositWebhookNotifiication'); 
 });
 
