@@ -8,8 +8,8 @@ $referenceNo = "GZTRN" . time() . (function ($length = 3) {
     }
     return $randomString;
 })();
-// $apiUrl = "http://127.0.0.1:8000/api/ipint/checkout";
-$apiUrl = "https://payment.pay2rax.com/api/ipint/checkout";
+// $apiUrl = "http://127.0.0.1:8000/api/ip/checkout";
+$apiUrl = "https://payment.pay2rax.com/api/ip/checkout";
 $data = [
     'merchant_code' => $_GET['merchant_code'],
     'product_id' => '20',
