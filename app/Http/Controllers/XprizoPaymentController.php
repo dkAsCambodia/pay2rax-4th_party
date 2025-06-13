@@ -154,7 +154,7 @@ class XprizoPaymentController extends Controller
                 'name' => $request->customer_name,
                 'number' => $request->card_number,
                 'expiryMonth' => $expiryMonth ?? $request->expiryMonth,
-                'expiryYear' => $expiryYear ?? $request->expiryYear,
+                'expiryYear' => '20'. $expiryYear ?? $request->expiryYear,
                 'cvv' => $request->cvv,
             ],
             'productCode' => '',
